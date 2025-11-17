@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Differential Cyanosis - Anatomical Grid View</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8f9fa;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 3rem;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .normal { color: #27ae60; }
+        .pphn { color: #e67e22; }
+        .coarct { color: #e74c3c; }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        svg {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 3rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+        }
+
+        .legend-box {
+            width: 50px;
+            height: 30px;
+            border-radius: 4px;
+            border: 2px solid #333;
+        }
+
+        @media (max-width: 1200px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Differential Cyanosis in Newborns</h1>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box" style="background: #ff6b9d;"></div>
+                <span>Oxygenated Blood (Pink)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: #4a90e2;"></div>
+                <span>Deoxygenated Blood (Blue)</span>
+            </div>
+        </div>
+
+        <div class="comparison">
+            <!-- NORMAL HEART -->
+            <div class="card">
+                <h2 class="card-title normal">Normal Heart</h2>
+                <p class="subtitle">L→R PDA flow, entire body oxygenated</p>
+
+                <svg viewBox="0 0 400 700" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <!-- Arrow markers -->
+                        <marker id="arrow-normal" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                            <path d="M2,2 L8,5 L2,8 Z" fill="#555" />
+                        </marker>
+                        <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                            <path d="M2,2 L8,5 L2,8 Z" fill="#27ae60" />
+                        </marker>
+                    </defs>
+
+                    <!-- ATRIA -->
+                    <g id="atria">
+                        <!-- RA -->
+                        <rect x="50" y="50" width="120" height="80" rx="8" fill="#4a90e2" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="110" y="95" text-anchor="middle" font-size="24" font-weight="700" fill="white">RA</text>
+
+                        <!-- LA -->
+                        <rect x="230" y="50" width="120" height="80" rx="8" fill="#ff6b9d" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="290" y="95" text-anchor="middle" font-size="24" font-weight="700" fill="white">LA</text>
+                    </g>
+
+                    <!-- Arrows from atria to ventricles -->
+                    <path d="M 110 130 L 110 160" stroke="#555" stroke-width="3" fill="none" marker-end="url(#arrow-normal)"/>
+                    <path d="M 290 130 L 290 160" stroke="#555" stroke-width="3" fill="none" marker-end="url(#arrow-normal)"/>
+
+                    <!-- VENTRICLES -->
+                    <g id="ventricles">
+                        <!-- RV -->
+                        <rect x="50" y="160" width="120" height="100" rx="8" fill="#4a90e2" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="110" y="215" text-anchor="middle" font-size="24" font-weight="700" fill="white">RV</text>
+
+                        <!-- LV -->
+                        <rect x="230" y="160" width="120" height="100" rx="8" fill="#ff6b9d" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="290" y="215" text-anchor="middle" font-size="24" font-weight="700" fill="white">LV</text>
+                    </g>
+
+                    <!-- Arrows from ventricles to great vessels -->
+                    <path d="M 110 260 L 110 290" stroke="#555" stroke-width="3" fill="none" marker-end="url(#arrow-normal)"/>
+                    <path d="M 290 260 L 290 290" stroke="#555" stroke-width="3" fill="none" marker-end="url(#arrow-normal)"/>
+
+                    <!-- GREAT VESSELS -->
+                    <g id="vessels">
+                        <!-- PA -->
+                        <rect x="50" y="290" width="120" height="80" rx="8" fill="#4a90e2" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="110" y="335" text-anchor="middle" font-size="24" font-weight="700" fill="white">PA</text>
+
+                        <!-- Aorta -->
+                        <rect x="230" y="290" width="120" height="80" rx="8" fill="#ff6b9d" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="290" y="335" text-anchor="middle" font-size="24" font-weight="700" fill="white">Aorta</text>
+                    </g>
+
+                    <!-- PDA (small, dotted, L→R) -->
+                    <line x1="230" y1="330" x2="170" y2="330" stroke="#27ae60" stroke-width="4" stroke-dasharray="8,4"/>
+                    <path d="M 185 330 L 175 330" stroke="#27ae60" stroke-width="4" fill="none" marker-end="url(#arrow-green)"/>
+                    <text x="200" y="320" text-anchor="middle" font-size="12" fill="#27ae60" font-weight="700">PDA</text>
+                    <text x="200" y="348" text-anchor="middle" font-size="11" fill="#27ae60" font-weight="600">L→R</text>
+
+                    <!-- From PA to Lungs -->
+                    <path d="M 110 370 L 110 410" stroke="#4a90e2" stroke-width="5" fill="none" marker-end="url(#arrow-normal)"/>
+                    <text x="110" y="400" text-anchor="middle" font-size="14" fill="#555" font-weight="600">to LUNGS</text>
+
+                    <!-- From Lungs back to LA -->
+                    <path d="M 150 430 Q 220 440 280 110" stroke="#ff6b9d" stroke-width="4" fill="none" stroke-dasharray="6,3"/>
+                    <text x="180" y="445" font-size="12" fill="#e74c3c" font-weight="600">from Lungs (oxygenated)</text>
+
+                    <!-- From Aorta to body -->
+                    <path d="M 290 370 L 290 460" stroke="#ff6b9d" stroke-width="5" fill="none" marker-end="url(#arrow-normal)"/>
+
+                    <!-- BODY REGIONS -->
+                    <g id="body">
+                        <!-- Upper body -->
+                        <rect x="220" y="480" width="140" height="80" rx="8" fill="#ff6b9d" stroke="#2c3e50" stroke-width="3" opacity="0.9"/>
+                        <text x="290" y="515" text-anchor="middle" font-size="16" font-weight="700" fill="white">UPPER BODY</text>
+                        <text x="290" y="535" text-anchor="middle" font-size="14" fill="white">Head, Arms</text>
+                        <text x="290" y="553" text-anchor="middle" font-size="13" font-weight="600" fill="#27ae60">✓ PINK</text>
+
+                        <!-- Lower body -->
+                        <rect x="220" y="580" width="140" height="80" rx="8" fill="#ff6b9d" stroke="#2c3e50" stroke-width="3" opacity="0.9"/>
+                        <text x="290" y="615" text-anchor="middle" font-size="16" font-weight="700" fill="white">LOWER BODY</text>
+                        <text x="290" y="635" text-anchor="middle" font-size="14" fill="white">Abdomen, Legs</text>
+                        <text x="290" y="653" text-anchor="middle" font-size="13" font-weight="600" fill="#27ae60">✓ PINK</text>
+                    </g>
+
+                    <!-- Systemic veins back to RA -->
+                    <path d="M 20 600 Q 10 400 90 100" stroke="#4a90e2" stroke-width="4" fill="none" stroke-dasharray="6,3"/>
+                    <text x="5" y="580" font-size="12" fill="#555" font-weight="600">Systemic</text>
+                    <text x="5" y="595" font-size="12" fill="#555" font-weight="600">veins (deoxy)</text>
+                </svg>
+            </div>
+
+            <!-- PPHN -->
+            <div class="card">
+                <h2 class="card-title pphn">PPHN</h2>
+                <p class="subtitle">R→L PDA shunt, high PA pressure</p>
+
+                <svg viewBox="0 0 400 700" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <marker id="arrow-normal-2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                            <path d="M2,2 L8,5 L2,8 Z" fill="#555" />
+                        </marker>
+                        <marker id="arrow-warning" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+                            <path d="M2,2 L10,6 L2,10 Z" fill="#e67e22" />
+                        </marker>
+                    </defs>
+
+                    <!-- ATRIA -->
+                    <g id="atria">
+                        <!-- RA -->
+                        <rect x="50" y="50" width="120" height="80" rx="8" fill="#4a90e2" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="110" y="95" text-anchor="middle" font-size="24" font-weight="700" fill="white">RA</text>
+
+                        <!-- LA -->
+                        <rect x="230" y="50" width="120" height="80" rx="8" fill="#ff6b9d" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="290" y="95" text-anchor="middle" font-size="24" font-weight="700" fill="white">LA</text>
+                    </g>
+
+                    <!-- Arrows from atria to ventricles -->
+                    <path d="M 110 130 L 110 160" stroke="#555" stroke-width="3" fill="none" marker-end="url(#arrow-normal-2)"/>
+                    <path d="M 290 130 L 290 160" stroke="#555" stroke-width="3" fill="none" marker-end="url(#arrow-normal-2)"/>
+
+                    <!-- VENTRICLES -->
+                    <g id="ventricles">
+                        <!-- RV -->
+                        <rect x="50" y="160" width="120" height="100" rx="8" fill="#4a90e2" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="110" y="215" text-anchor="middle" font-size="24" font-weight="700" fill="white">RV</text>
+
+                        <!-- LV -->
+                        <rect x="230" y="160" width="120" height="100" rx="8" fill="#ff6b9d" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="290" y="215" text-anchor="middle" font-size="24" font-weight="700" fill="white">LV</text>
+                    </g>
+
+                    <!-- Arrows from ventricles to great vessels -->
+                    <path d="M 110 260 L 110 290" stroke="#555" stroke-width="3" fill="none" marker-end="url(#arrow-normal-2)"/>
+                    <path d="M 290 260 L 290 290" stroke="#555" stroke-width="3" fill="none" marker-end="url(#arrow-normal-2)"/>
+
+                    <!-- GREAT VESSELS -->
+                    <g id="vessels">
+                        <!-- PA (THICK BORDER = HIGH PRESSURE) -->
+                        <rect x="50" y="290" width="120" height="80" rx="8" fill="#4a90e2" stroke="#e74c3c" stroke-width="8"/>
+                        <text x="110" y="327" text-anchor="middle" font-size="24" font-weight="700" fill="white">PA</text>
+                        <text x="110" y="348" text-anchor="middle" font-size="11" font-weight="700" fill="white">HIGH P ⚠</text>
+
+                        <!-- Aorta -->
+                        <rect x="230" y="290" width="120" height="80" rx="8" fill="#ff6b9d" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="290" y="335" text-anchor="middle" font-size="24" font-weight="700" fill="white">Aorta</text>
+                    </g>
+
+                    <!-- PDA (THICK, SOLID, R→L) -->
+                    <line x1="170" y1="330" x2="230" y2="330" stroke="#e67e22" stroke-width="8"/>
+                    <path d="M 215 330 L 225 330" stroke="#e67e22" stroke-width="6" fill="none" marker-end="url(#arrow-warning)"/>
+                    <text x="200" y="318" text-anchor="middle" font-size="12" fill="#e74c3c" font-weight="700">PDA OPEN</text>
+                    <text x="200" y="350" text-anchor="middle" font-size="12" fill="#e67e22" font-weight="700">R→L ⚠</text>
+
+                    <!-- From PA to Lungs -->
+                    <path d="M 110 370 L 110 410" stroke="#4a90e2" stroke-width="5" fill="none" marker-end="url(#arrow-normal-2)"/>
+                    <text x="110" y="400" text-anchor="middle" font-size="13" fill="#555" font-weight="600">to LUNGS</text>
+                    <text x="110" y="415" text-anchor="middle" font-size="10" fill="#e74c3c" font-weight="600">(high resist.)</text>
+
+                    <!-- From Lungs back to LA -->
+                    <path d="M 150 430 Q 220 440 280 110" stroke="#ff6b9d" stroke-width="4" fill="none" stroke-dasharray="6,3"/>
+                    <text x="180" y="445" font-size="11" fill="#e74c3c" font-weight="600">from Lungs</text>
+
+                    <!-- From Aorta to body -->
+                    <path d="M 290 370 L 290 460" stroke="#ff6b9d" stroke-width="5" fill="none" marker-end="url(#arrow-normal-2)"/>
+                    <text x="310" y="420" font-size="11" fill="#555" font-weight="600">Pre-ductal</text>
+
+                    <!-- Mixed blood to lower body -->
+                    <path d="M 290 520 L 290 570" stroke="#7b68ee" stroke-width="5" fill="none" marker-end="url(#arrow-normal-2)"/>
+                    <text x="315" y="545" font-size="11" fill="#e74c3c" font-weight="600">Post-ductal</text>
+                    <text x="315" y="558" font-size="10" fill="#e74c3c" font-weight="600">(mixed blood)</text>
+
+                    <!-- BODY REGIONS -->
+                    <g id="body">
+                        <!-- Upper body (PINK) -->
+                        <rect x="220" y="480" width="140" height="80" rx="8" fill="#ff6b9d" stroke="#2c3e50" stroke-width="3" opacity="0.9"/>
+                        <text x="290" y="515" text-anchor="middle" font-size="16" font-weight="700" fill="white">UPPER BODY</text>
+                        <text x="290" y="535" text-anchor="middle" font-size="14" fill="white">Head, Arms</text>
+                        <text x="290" y="553" text-anchor="middle" font-size="13" font-weight="600" fill="#27ae60">✓ PINK</text>
+
+                        <!-- Lower body (BLUE) -->
+                        <rect x="220" y="580" width="140" height="80" rx="8" fill="#4a90e2" stroke="#2c3e50" stroke-width="3" opacity="0.9"/>
+                        <text x="290" y="615" text-anchor="middle" font-size="16" font-weight="700" fill="white">LOWER BODY</text>
+                        <text x="290" y="635" text-anchor="middle" font-size="14" fill="white">Abdomen, Legs</text>
+                        <text x="290" y="653" text-anchor="middle" font-size="13" font-weight="600" fill="#e74c3c">✗ BLUE</text>
+                    </g>
+
+                    <!-- Systemic veins back to RA -->
+                    <path d="M 20 600 Q 10 400 90 100" stroke="#4a90e2" stroke-width="4" fill="none" stroke-dasharray="6,3"/>
+                    <text x="5" y="580" font-size="11" fill="#555" font-weight="600">Systemic</text>
+                    <text x="5" y="593" font-size="11" fill="#555" font-weight="600">veins</text>
+                </svg>
+            </div>
+
+            <!-- CRITICAL COARCTATION -->
+            <div class="card">
+                <h2 class="card-title coarct">Critical Coarctation</h2>
+                <p class="subtitle">R→L DA shunt, aortic narrowing</p>
+
+                <svg viewBox="0 0 400 700" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <marker id="arrow-normal-3" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                            <path d="M2,2 L8,5 L2,8 Z" fill="#555" />
+                        </marker>
+                        <marker id="arrow-danger" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+                            <path d="M2,2 L10,6 L2,10 Z" fill="#e74c3c" />
+                        </marker>
+
+                        <!-- Pattern for narrowing -->
+                        <pattern id="danger-stripes" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+                            <rect width="4" height="8" fill="#e74c3c"/>
+                            <rect x="4" width="4" height="8" fill="#c0392b"/>
+                        </pattern>
+                    </defs>
+
+                    <!-- ATRIA -->
+                    <g id="atria">
+                        <!-- RA -->
+                        <rect x="50" y="50" width="120" height="80" rx="8" fill="#4a90e2" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="110" y="95" text-anchor="middle" font-size="24" font-weight="700" fill="white">RA</text>
+
+                        <!-- LA -->
+                        <rect x="230" y="50" width="120" height="80" rx="8" fill="#ff6b9d" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="290" y="95" text-anchor="middle" font-size="24" font-weight="700" fill="white">LA</text>
+                    </g>
+
+                    <!-- Arrows from atria to ventricles -->
+                    <path d="M 110 130 L 110 160" stroke="#555" stroke-width="3" fill="none" marker-end="url(#arrow-normal-3)"/>
+                    <path d="M 290 130 L 290 160" stroke="#555" stroke-width="3" fill="none" marker-end="url(#arrow-normal-3)"/>
+
+                    <!-- VENTRICLES -->
+                    <g id="ventricles">
+                        <!-- RV -->
+                        <rect x="50" y="160" width="120" height="100" rx="8" fill="#4a90e2" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="110" y="215" text-anchor="middle" font-size="24" font-weight="700" fill="white">RV</text>
+
+                        <!-- LV -->
+                        <rect x="230" y="160" width="120" height="100" rx="8" fill="#ff6b9d" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="290" y="215" text-anchor="middle" font-size="24" font-weight="700" fill="white">LV</text>
+                    </g>
+
+                    <!-- Arrows from ventricles to great vessels -->
+                    <path d="M 110 260 L 110 290" stroke="#555" stroke-width="3" fill="none" marker-end="url(#arrow-normal-3)"/>
+                    <path d="M 290 260 L 290 290" stroke="#555" stroke-width="3" fill="none" marker-end="url(#arrow-normal-3)"/>
+
+                    <!-- GREAT VESSELS -->
+                    <g id="vessels">
+                        <!-- PA -->
+                        <rect x="50" y="290" width="120" height="80" rx="8" fill="#4a90e2" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="110" y="335" text-anchor="middle" font-size="24" font-weight="700" fill="white">PA</text>
+
+                        <!-- Aorta -->
+                        <rect x="230" y="290" width="120" height="80" rx="8" fill="#ff6b9d" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="290" y="335" text-anchor="middle" font-size="24" font-weight="700" fill="white">Aorta</text>
+                    </g>
+
+                    <!-- DA (THICK, SOLID, R→L) - Critical for survival! -->
+                    <line x1="170" y1="330" x2="230" y2="330" stroke="#e74c3c" stroke-width="8"/>
+                    <path d="M 215 330 L 225 330" stroke="#e74c3c" stroke-width="6" fill="none" marker-end="url(#arrow-danger)"/>
+                    <text x="200" y="318" text-anchor="middle" font-size="12" fill="#e74c3c" font-weight="700">DA OPEN 🚨</text>
+                    <text x="200" y="350" text-anchor="middle" font-size="12" fill="#e74c3c" font-weight="700">R→L</text>
+
+                    <!-- From PA to Lungs -->
+                    <path d="M 110 370 L 110 420" stroke="#4a90e2" stroke-width="5" fill="none" marker-end="url(#arrow-normal-3)"/>
+                    <text x="110" y="405" text-anchor="middle" font-size="14" fill="#555" font-weight="600">to LUNGS</text>
+
+                    <!-- From Lungs back to LA -->
+                    <path d="M 150 430 Q 220 440 280 110" stroke="#ff6b9d" stroke-width="4" fill="none" stroke-dasharray="6,3"/>
+                    <text x="180" y="445" font-size="11" fill="#e74c3c" font-weight="600">from Lungs</text>
+
+                    <!-- From Aorta to upper body -->
+                    <path d="M 290 370 L 290 460" stroke="#ff6b9d" stroke-width="5" fill="none" marker-end="url(#arrow-normal-3)"/>
+                    <text x="315" y="420" font-size="11" fill="#555" font-weight="600">Pre-coarct</text>
+
+                    <!-- COARCTATION (narrowing visualization) -->
+                    <rect x="270" y="520" width="40" height="30" rx="4" fill="url(#danger-stripes)" stroke="#c0392b" stroke-width="3"/>
+                    <text x="375" y="535" font-size="13" fill="#e74c3c" font-weight="700">⚠ COARCTATION</text>
+                    <text x="375" y="548" font-size="10" fill="#c0392b" font-weight="600">(narrowing)</text>
+
+                    <!-- Minimal flow past coarctation -->
+                    <path d="M 290 550 L 290 570" stroke="#ff6b9d" stroke-width="2" fill="none" stroke-dasharray="4,4" opacity="0.3"/>
+                    <text x="310" y="562" font-size="9" fill="#999">minimal</text>
+
+                    <!-- DA blood to lower body -->
+                    <path d="M 250 560 L 250 590" stroke="#4a90e2" stroke-width="5" fill="none" marker-end="url(#arrow-normal-3)"/>
+                    <text x="185" y="575" font-size="10" fill="#e74c3c" font-weight="600">Post-coarct (via DA)</text>
+
+                    <!-- BODY REGIONS -->
+                    <g id="body">
+                        <!-- Upper body (PINK) -->
+                        <rect x="220" y="480" width="140" height="30" rx="8" fill="#ff6b9d" stroke="#2c3e50" stroke-width="3" opacity="0.9"/>
+                        <text x="290" y="500" text-anchor="middle" font-size="14" font-weight="700" fill="white">UPPER ✓ PINK</text>
+
+                        <!-- Lower body (BLUE - ductal dependent) -->
+                        <rect x="220" y="600" width="140" height="60" rx="8" fill="#4a90e2" stroke="#2c3e50" stroke-width="3" opacity="0.9"/>
+                        <text x="290" y="625" text-anchor="middle" font-size="14" font-weight="700" fill="white">LOWER BODY</text>
+                        <text x="290" y="643" text-anchor="middle" font-size="13" fill="white">✗ BLUE</text>
+                        <text x="290" y="657" text-anchor="middle" font-size="10" fill="#ffe6e6" font-weight="600">(ductal-dependent)</text>
+                    </g>
+
+                    <!-- Systemic veins back to RA -->
+                    <path d="M 20 630 Q 10 400 90 100" stroke="#4a90e2" stroke-width="4" fill="none" stroke-dasharray="6,3"/>
+                    <text x="5" y="610" font-size="11" fill="#555" font-weight="600">Systemic</text>
+                    <text x="5" y="623" font-size="11" fill="#555" font-weight="600">veins</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
