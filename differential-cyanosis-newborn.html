@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Differential Cyanosis in Newborn</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #141414;
+  color: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  overflow-x: hidden;
+}
+
+.title-section {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.main-title {
+  font-size: 2.8rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #999;
+  font-weight: 300;
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.control-btn {
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 2px solid #333;
+  background: #222;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.control-btn:hover {
+  border-color: #555;
+  transform: translateY(-2px);
+}
+
+.control-btn.active {
+  transform: scale(1.05);
+  box-shadow: 0 4px 20px rgba(255,255,255,0.1);
+}
+
+.control-btn.active[data-condition="normal"] {
+  border-color: #14b8a6;
+  background: #0d9488;
+}
+
+.control-btn.active[data-condition="pphn"] {
+  border-color: #f59e0b;
+  background: #d97706;
+}
+
+.control-btn.active[data-condition="coarctation"] {
+  border-color: #ef4444;
+  background: #dc2626;
+}
+
+.cards-container {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+  max-width: 1400px;
+}
+
+.card {
+  background: #1a1a1a;
+  border-radius: 16px;
+  padding: 2rem;
+  min-width: 280px;
+  max-width: 380px;
+  flex: 1;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  transition: all 0.4s ease;
+  border: 2px solid transparent;
+}
+
+.card.active {
+  transform: scale(1.05);
+}
+
+.card.normal {
+  border-top: 4px solid #14b8a6;
+}
+
+.card.normal.active {
+  border-color: #14b8a6;
+  box-shadow: 0 0 30px rgba(20,184,166,0.3);
+}
+
+.card.pphn {
+  border-top: 4px solid #f59e0b;
+}
+
+.card.pphn.active {
+  border-color: #f59e0b;
+  box-shadow: 0 0 30px rgba(245,158,11,0.3);
+}
+
+.card.coarctation {
+  border-top: 4px solid #ef4444;
+}
+
+.card.coarctation.active {
+  border-color: #ef4444;
+  box-shadow: 0 0 30px rgba(239,68,68,0.3);
+}
+
+.card-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.card.normal .card-title {
+  color: #14b8a6;
+}
+
+.card.pphn .card-title {
+  color: #f59e0b;
+}
+
+.card.coarctation .card-title {
+  color: #ef4444;
+}
+
+.card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.card li {
+  padding: 0.5rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+  color: #d1d5db;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.card li:before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: #666;
+}
+
+.schematics-container {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 1400px;
+  position: relative;
+}
+
+.schematic {
+  position: relative;
+  opacity: 0.3;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transform: scale(0.95);
+}
+
+.schematic.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.schematic svg {
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+}
+
+.mechanism-label {
+  position: absolute;
+  bottom: -2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.8);
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #d1d5db;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  border: 1px solid #333;
+}
+
+.schematic.active .mechanism-label {
+  opacity: 1;
+}
+
+@keyframes flow-lr {
+  0%, 100% { stroke-dashoffset: 0; }
+  50% { stroke-dashoffset: -20; }
+}
+
+@keyframes flow-rl {
+  0%, 100% { stroke-dashoffset: 0; }
+  50% { stroke-dashoffset: 20; }
+}
+
+.flow-arrow {
+  stroke-dasharray: 8 4;
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.flow-lr {
+  animation-name: flow-lr;
+}
+
+.flow-rl {
+  animation-name: flow-rl;
+}
+
+@media (max-width: 1024px) {
+  .cards-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .schematics-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .main-title {
+    font-size: 2rem;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+</style>
+</head>
+<body>
+
+<div class="title-section">
+  <h1 class="main-title">Differential Cyanosis in Newborn</h1>
+  <p class="subtitle">Normal • PPHN • Critical Coarctation</p>
+</div>
+
+<div class="controls">
+  <button class="control-btn active" data-condition="normal">Normal</button>
+  <button class="control-btn" data-condition="pphn">PPHN</button>
+  <button class="control-btn" data-condition="coarctation">Critical Coarctation</button>
+</div>
+
+<div class="cards-container">
+  <div class="card normal active">
+    <h2 class="card-title">Normal Heart</h2>
+    <ul>
+      <li>Aortic P &gt; PA P</li>
+      <li>L→R PDA shunt</li>
+      <li>Pink upper + lower</li>
+    </ul>
+  </div>
+
+  <div class="card pphn">
+    <h2 class="card-title">PPHN</h2>
+    <ul>
+      <li>High PA pressure</li>
+      <li>R→L PDA shunt</li>
+      <li>Blue lower body</li>
+      <li>Normal anatomy</li>
+    </ul>
+  </div>
+
+  <div class="card coarctation">
+    <h2 class="card-title">Critical Coarctation</h2>
+    <ul>
+      <li>Narrowed aorta distal</li>
+      <li>R→L DA shunt</li>
+      <li>Deoxy lower body</li>
+      <li>Fixed obstruction</li>
+    </ul>
+  </div>
+</div>
+
+<div class="schematics-container">
+  <div class="schematic active" id="schematic-normal">
+    <span class="visually-hidden">Normal: aortic pressure higher than pulmonary; L-to-R PDA; no differential cyanosis.</span>
+    <svg width="300" height="380" viewBox="0 0 300 380">
+      <defs>
+        <marker id="arrowhead-red" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <polygon points="0 0, 10 3, 0 6" fill="#ff3333" />
+        </marker>
+      </defs>
+
+      <circle cx="150" cy="80" r="22" fill="#ff8888" stroke="#ff3333" stroke-width="2"/>
+      <text x="150" y="85" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Upper</text>
+
+      <ellipse cx="150" cy="190" rx="35" ry="40" fill="#d32f2f" stroke="#ff3333" stroke-width="2"/>
+      <text x="150" y="195" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">Heart</text>
+
+      <path d="M 150 150 Q 180 135 195 115 Q 200 100 195 80 Q 190 60 180 50" stroke="#ff3333" stroke-width="6" fill="none"/>
+      <text x="210" y="85" fill="#ff8888" font-size="11" font-weight="600">Aorta</text>
+
+      <path d="M 150 150 Q 120 135 105 115 Q 100 100 105 80" stroke="#ff6666" stroke-width="5" fill="none"/>
+      <text x="65" y="85" fill="#ff8888" font-size="11" font-weight="600">PA</text>
+
+      <path class="flow-arrow flow-lr" d="M 120 100 L 170 100" stroke="#ff3333" stroke-width="4" fill="none" marker-end="url(#arrowhead-red)"/>
+      <text x="145" y="90" text-anchor="middle" fill="#14b8a6" font-size="10" font-weight="700">PDA</text>
+
+      <path d="M 180 50 L 180 280" stroke="#ff3333" stroke-width="5" fill="none"/>
+
+      <rect x="125" y="290" width="50" height="60" rx="8" fill="#ff8888" stroke="#ff3333" stroke-width="2"/>
+      <text x="150" y="325" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Lower</text>
+    </svg>
+    <div class="mechanism-label">Systemic &gt; pulmonary pressure → L→R PDA</div>
+  </div>
+
+  <div class="schematic" id="schematic-pphn">
+    <span class="visually-hidden">PPHN: pulmonary pressure higher; R-to-L PDA; cyanotic lower body.</span>
+    <svg width="300" height="380" viewBox="0 0 300 380">
+      <defs>
+        <marker id="arrowhead-blue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <polygon points="0 0, 10 3, 0 6" fill="#3366ff" />
+        </marker>
+      </defs>
+
+      <circle cx="150" cy="80" r="22" fill="#ff8888" stroke="#ff3333" stroke-width="2"/>
+      <text x="150" y="85" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Upper</text>
+
+      <ellipse cx="150" cy="190" rx="35" ry="40" fill="#d32f2f" stroke="#ff3333" stroke-width="2"/>
+      <text x="150" y="195" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">Heart</text>
+
+      <path d="M 150 150 Q 180 135 195 115 Q 200 100 195 80 Q 190 60 180 50" stroke="#ff3333" stroke-width="6" fill="none"/>
+      <text x="210" y="85" fill="#ff8888" font-size="11" font-weight="600">Aorta</text>
+
+      <path d="M 150 150 Q 120 135 105 115 Q 100 100 105 80" stroke="#3366ff" stroke-width="5" fill="none"/>
+      <text x="65" y="85" fill="#6688ff" font-size="11" font-weight="600">PA</text>
+      <text x="78" y="120" fill="#ffcc00" font-size="10" font-weight="700">High P</text>
+
+      <path class="flow-arrow flow-rl" d="M 170 100 L 120 100" stroke="#3366ff" stroke-width="4" fill="none" marker-end="url(#arrowhead-blue)"/>
+      <text x="145" y="90" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="700">PDA</text>
+
+      <path d="M 180 50 L 180 280" stroke="#9966ff" stroke-width="5" fill="none"/>
+
+      <rect x="125" y="290" width="50" height="60" rx="8" fill="#6688ff" stroke="#3366ff" stroke-width="2"/>
+      <text x="150" y="325" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Lower</text>
+    </svg>
+    <div class="mechanism-label">Pulmonary pressure stays high → R→L PDA</div>
+  </div>
+
+  <div class="schematic" id="schematic-coarctation">
+    <span class="visually-hidden">Critical coarctation: narrowed distal aorta; R-to-L DA; cyanotic lower body.</span>
+    <svg width="300" height="380" viewBox="0 0 300 380">
+      <defs>
+        <marker id="arrowhead-blue2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <polygon points="0 0, 10 3, 0 6" fill="#3366ff" />
+        </marker>
+      </defs>
+
+      <circle cx="150" cy="80" r="22" fill="#ff8888" stroke="#ff3333" stroke-width="2"/>
+      <text x="150" y="85" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Upper</text>
+
+      <ellipse cx="150" cy="190" rx="35" ry="40" fill="#d32f2f" stroke="#ff3333" stroke-width="2"/>
+      <text x="150" y="195" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">Heart</text>
+
+      <path d="M 150 150 Q 180 135 195 115 Q 200 100 195 80 Q 190 60 180 50" stroke="#ff3333" stroke-width="6" fill="none"/>
+      <text x="210" y="85" fill="#ff8888" font-size="11" font-weight="600">Aorta</text>
+
+      <rect x="177" y="135" width="6" height="20" fill="#ff0000" stroke="#ff0000" stroke-width="1"/>
+      <text x="195" y="150" fill="#ef4444" font-size="9" font-weight="700">CoA</text>
+
+      <path d="M 150 150 Q 120 135 105 115 Q 100 100 105 80" stroke="#6688ff" stroke-width="5" fill="none"/>
+      <text x="65" y="85" fill="#6688ff" font-size="11" font-weight="600">PA</text>
+
+      <path class="flow-arrow flow-rl" d="M 130 130 L 175 155" stroke="#3366ff" stroke-width="4" fill="none" marker-end="url(#arrowhead-blue2)"/>
+      <text x="145" y="135" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="700">DA</text>
+
+      <path d="M 180 155 L 180 280" stroke="#3366ff" stroke-width="5" fill="none"/>
+
+      <rect x="125" y="290" width="50" height="60" rx="8" fill="#6688ff" stroke="#3366ff" stroke-width="2"/>
+      <text x="150" y="325" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Lower</text>
+    </svg>
+    <div class="mechanism-label">Distal aortic pressure low → R→L DA</div>
+  </div>
+</div>
+
+<script>
+const buttons = document.querySelectorAll('.control-btn');
+const cards = document.querySelectorAll('.card');
+const schematics = document.querySelectorAll('.schematic');
+
+function setActiveCondition(condition) {
+  buttons.forEach(btn => {
+    if (btn.dataset.condition === condition) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+
+  cards.forEach(card => {
+    if (card.classList.contains(condition)) {
+      card.classList.add('active');
+    } else {
+      card.classList.remove('active');
+    }
+  });
+
+  schematics.forEach(schematic => {
+    if (schematic.id === `schematic-${condition}`) {
+      schematic.classList.add('active');
+    } else {
+      schematic.classList.remove('active');
+    }
+  });
+}
+
+buttons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    setActiveCondition(btn.dataset.condition);
+  });
+});
+
+setActiveCondition('normal');
+</script>
+
+</body>
+</html>
