@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive visualization of differential cyanosis in newborns: Normal Heart, PPHN, and Critical Coarctation">
+    <title>Differential Cyanosis in Newborns - Interactive Medical Visualization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --oxy-blood: #ff6b9d;
+            --deoxy-blood: #4a90e2;
+            --heart-tissue: #f4e4d7;
+            --vessel-stroke: #8b7355;
+            --normal-accent: #2ecc71;
+            --pathology-accent: #f39c12;
+            --danger-accent: #e74c3c;
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .legend-circle {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .condition-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 0.8s ease-out backwards;
+        }
+
+        .condition-card:nth-child(1) { animation-delay: 0.1s; }
+        .condition-card:nth-child(2) { animation-delay: 0.2s; }
+        .condition-card:nth-child(3) { animation-delay: 0.3s; }
+
+        .condition-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-title.normal { color: var(--normal-accent); }
+        .card-title.pathology { color: var(--pathology-accent); }
+        .card-title.critical { color: var(--danger-accent); }
+
+        .card-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-normal {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--normal-accent);
+        }
+
+        .badge-pressure {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--pathology-accent);
+        }
+
+        .badge-anatomical {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger-accent);
+        }
+
+        .diagram-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            margin: 1.5rem 0;
+            background: #fafbfc;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-top: 1.5rem;
+        }
+
+        .feature-item {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: background 0.2s ease;
+        }
+
+        .feature-item:hover {
+            background: #e9ecef;
+        }
+
+        .feature-item.normal { border-color: var(--normal-accent); }
+        .feature-item.pathology { border-color: var(--pathology-accent); }
+        .feature-item.critical { border-color: var(--danger-accent); }
+
+        .feature-label {
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .control-btn {
+            background: white;
+            border: 2px solid var(--text-primary);
+            color: var(--text-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .control-btn:hover {
+            background: var(--text-primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .control-btn.active {
+            background: var(--normal-accent);
+            border-color: var(--normal-accent);
+            color: white;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 1000;
+            max-width: 250px;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        /* SVG Animations */
+        @keyframes flowAnimation {
+            0% { offset-distance: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { offset-distance: 100%; opacity: 0; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .blood-particle {
+            animation: flowAnimation 3s infinite;
+        }
+
+        .heart-chamber {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* Pressure indicators */
+        .pressure-bar {
+            transition: all 0.5s ease;
+        }
+
+        .shunt-arrow {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                bottom: 1rem;
+                right: 1rem;
+                left: 1rem;
+                flex-direction: column;
+            }
+
+            .diagram-container {
+                height: 350px;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Clinical Notes Section */
+        .clinical-notes {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .clinical-notes h2 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            font-size: 1.75rem;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .note-card {
+            padding: 1.25rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--normal-accent);
+        }
+
+        .note-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.1), rgba(74, 144, 226, 0.1));
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            border: 2px solid rgba(74, 144, 226, 0.3);
+        }
+
+        .highlight-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header role="banner">
+            <h1>Differential Cyanosis in Newborns</h1>
+            <p class="subtitle">Interactive Pathophysiology Visualization</p>
+
+            <div class="legend" role="list" aria-label="Blood oxygenation legend">
+                <div class="legend-item" role="listitem">
+                    <span class="legend-circle" style="background: var(--oxy-blood);"></span>
+                    <span>Oxygenated Blood</span>
+                </div>
+                <div class="legend-item" role="listitem">
+                    <span class="legend-circle" style="background: var(--deoxy-blood);"></span>
+                    <span>Deoxygenated Blood</span>
+                </div>
+            </div>
+        </header>
+
+        <main role="main">
+            <div class="comparison-grid">
+                <!-- Normal Heart -->
+                <article class="condition-card" id="normal-card">
+                    <div class="card-header">
+                        <h2 class="card-title normal">Normal Heart</h2>
+                        <span class="card-badge badge-normal">Physiologic</span>
+                    </div>
+
+                    <div class="diagram-container" id="normal-diagram">
+                        <svg viewBox="0 0 300 400" role="img" aria-label="Normal heart circulation diagram">
+                            <defs>
+                                <filter id="glow-oxy">
+                                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                                <marker id="arrowhead-normal" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#2ecc71" />
+                                </marker>
+                            </defs>
+
+                            <!-- Upper body -->
+                            <rect x="110" y="20" width="80" height="40" rx="5" fill="#ffebf0" stroke="var(--vessel-stroke)" stroke-width="2"/>
+                            <text x="150" y="45" text-anchor="middle" font-size="12" font-weight="600">Upper Body</text>
+
+                            <!-- Heart -->
+                            <g class="heart-chamber">
+                                <ellipse cx="150" cy="150" rx="50" ry="60" fill="var(--heart-tissue)" stroke="var(--vessel-stroke)" stroke-width="3"/>
+                                <line x1="150" y1="90" x2="150" y2="210" stroke="var(--vessel-stroke)" stroke-width="2"/>
+                                <text x="125" y="145" font-size="11" font-weight="600">RA</text>
+                                <text x="165" y="145" font-size="11" font-weight="600">LA</text>
+                                <text x="125" y="175" font-size="11" font-weight="600">RV</text>
+                                <text x="165" y="175" font-size="11" font-weight="600">LV</text>
+                            </g>
+
+                            <!-- Pulmonary Artery -->
+                            <path d="M 130 100 Q 80 90 70 120" stroke="var(--deoxy-blood)" stroke-width="8" fill="none" opacity="0.7"/>
+                            <text x="50" y="115" font-size="10" font-weight="600">PA</text>
+
+                            <!-- Aorta -->
+                            <path d="M 170 100 Q 220 90 230 120" stroke="var(--oxy-blood)" stroke-width="8" fill="none" opacity="0.7" filter="url(#glow-oxy)"/>
+                            <text x="235" y="115" font-size="10" font-weight="600">Ao</text>
+
+                            <!-- PDA (closed/minimal) -->
+                            <line x1="80" y1="130" x2="220" y2="130" stroke="#cccccc" stroke-width="4" stroke-dasharray="5,5" opacity="0.5"/>
+                            <text x="145" y="125" font-size="9" text-anchor="middle" fill="#666">PDA</text>
+
+                            <!-- Flow arrow L→R -->
+                            <path d="M 90 130 L 110 130" stroke="#2ecc71" stroke-width="3" fill="none" marker-end="url(#arrowhead-normal)" class="shunt-arrow"/>
+                            <text x="100" y="150" font-size="9" text-anchor="middle" fill="#2ecc71" font-weight="600">L→R</text>
+
+                            <!-- Lower body -->
+                            <rect x="110" y="340" width="80" height="40" rx="5" fill="#ffebf0" stroke="var(--vessel-stroke)" stroke-width="2"/>
+                            <text x="150" y="365" text-anchor="middle" font-size="12" font-weight="600">Lower Body</text>
+
+                            <!-- Vessels to upper body (oxygenated) -->
+                            <path d="M 150 60 L 150 90" stroke="var(--oxy-blood)" stroke-width="6" fill="none" opacity="0.7" filter="url(#glow-oxy)"/>
+
+                            <!-- Vessels to lower body (oxygenated) -->
+                            <path d="M 150 210 L 150 340" stroke="var(--oxy-blood)" stroke-width="6" fill="none" opacity="0.7" filter="url(#glow-oxy)"/>
+
+                            <!-- Blood particles (animated) -->
+                            <circle r="4" fill="var(--oxy-blood)" class="blood-particle" style="offset-path: path('M 150 210 L 150 340'); animation-delay: 0s;"/>
+                            <circle r="4" fill="var(--oxy-blood)" class="blood-particle" style="offset-path: path('M 150 210 L 150 340'); animation-delay: 1s;"/>
+                            <circle r="4" fill="var(--oxy-blood)" class="blood-particle" style="offset-path: path('M 150 60 L 150 90'); animation-delay: 0.5s;"/>
+                        </svg>
+                    </div>
+
+                    <ul class="feature-list">
+                        <li class="feature-item normal">
+                            <span class="feature-label">Flow:</span>
+                            L-to-R through PDA
+                        </li>
+                        <li class="feature-item normal">
+                            <span class="feature-label">Pressure:</span>
+                            Aortic > PA pressure
+                        </li>
+                        <li class="feature-item normal">
+                            <span class="feature-label">Saturation:</span>
+                            Well-oxygenated throughout
+                        </li>
+                        <li class="feature-item normal">
+                            <span class="feature-label">Clinical:</span>
+                            No differential cyanosis
+                        </li>
+                    </ul>
+                </article>
+
+                <!-- PPHN -->
+                <article class="condition-card" id="pphn-card">
+                    <div class="card-header">
+                        <h2 class="card-title pathology">PPHN</h2>
+                        <span class="card-badge badge-pressure">Pressure-Related</span>
+                    </div>
+
+                    <div class="diagram-container" id="pphn-diagram">
+                        <svg viewBox="0 0 300 400" role="img" aria-label="PPHN circulation diagram">
+                            <defs>
+                                <marker id="arrowhead-pphn" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#f39c12" />
+                                </marker>
+                                <linearGradient id="mixed-blood" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:0.7" />
+                                    <stop offset="100%" style="stop-color:#4a90e2;stop-opacity:0.7" />
+                                </linearGradient>
+                            </defs>
+
+                            <!-- Upper body (pink - pre-ductal) -->
+                            <rect x="110" y="20" width="80" height="40" rx="5" fill="#ffebf0" stroke="var(--vessel-stroke)" stroke-width="2"/>
+                            <text x="150" y="40" text-anchor="middle" font-size="11" font-weight="600">Upper Body</text>
+                            <text x="150" y="52" text-anchor="middle" font-size="9" fill="#2ecc71" font-weight="600">Pink ✓</text>
+
+                            <!-- Heart -->
+                            <g class="heart-chamber">
+                                <ellipse cx="150" cy="150" rx="50" ry="60" fill="var(--heart-tissue)" stroke="var(--vessel-stroke)" stroke-width="3"/>
+                                <line x1="150" y1="90" x2="150" y2="210" stroke="var(--vessel-stroke)" stroke-width="2"/>
+                                <text x="125" y="145" font-size="11" font-weight="600">RA</text>
+                                <text x="165" y="145" font-size="11" font-weight="600">LA</text>
+                                <text x="125" y="175" font-size="11" font-weight="600">RV</text>
+                                <text x="165" y="175" font-size="11" font-weight="600">LV</text>
+                            </g>
+
+                            <!-- Pulmonary Artery (thick - high pressure) -->
+                            <path d="M 130 100 Q 80 90 70 120" stroke="var(--deoxy-blood)" stroke-width="12" fill="none" opacity="0.8"/>
+                            <text x="40" y="110" font-size="10" font-weight="700">PA</text>
+                            <text x="35" y="122" font-size="8" fill="#e74c3c" font-weight="600">High P</text>
+
+                            <!-- Aorta -->
+                            <path d="M 170 100 Q 220 90 230 120" stroke="var(--oxy-blood)" stroke-width="8" fill="none" opacity="0.7" filter="url(#glow-oxy)"/>
+                            <text x="235" y="115" font-size="10" font-weight="600">Ao</text>
+
+                            <!-- PDA (patent, R→L shunt) -->
+                            <line x1="80" y1="130" x2="220" y2="130" stroke="var(--pathology-accent)" stroke-width="6" opacity="0.8"/>
+                            <text x="145" y="125" font-size="9" text-anchor="middle" fill="#e74c3c" font-weight="700">PDA</text>
+
+                            <!-- Flow arrow R→L -->
+                            <path d="M 210 130 L 190 130" stroke="#f39c12" stroke-width="4" fill="none" marker-end="url(#arrowhead-pphn)" class="shunt-arrow"/>
+                            <text x="200" y="150" font-size="9" text-anchor="middle" fill="#f39c12" font-weight="700">R→L</text>
+
+                            <!-- Lower body (blue - post-ductal) -->
+                            <rect x="110" y="340" width="80" height="40" rx="5" fill="#dae8f5" stroke="var(--vessel-stroke)" stroke-width="2"/>
+                            <text x="150" y="360" text-anchor="middle" font-size="11" font-weight="600">Lower Body</text>
+                            <text x="150" y="372" text-anchor="middle" font-size="9" fill="#4a90e2" font-weight="600">Blue ✗</text>
+
+                            <!-- Vessels to upper body (oxygenated) -->
+                            <path d="M 150 60 L 150 90" stroke="var(--oxy-blood)" stroke-width="6" fill="none" opacity="0.7" filter="url(#glow-oxy)"/>
+
+                            <!-- Vessels to lower body (deoxygenated from shunt) -->
+                            <path d="M 150 210 L 150 340" stroke="url(#mixed-blood)" stroke-width="6" fill="none" opacity="0.8"/>
+
+                            <!-- Blood particles -->
+                            <circle r="4" fill="var(--deoxy-blood)" class="blood-particle" style="offset-path: path('M 150 210 L 150 340'); animation-delay: 0s;"/>
+                            <circle r="4" fill="var(--deoxy-blood)" class="blood-particle" style="offset-path: path('M 150 210 L 150 340'); animation-delay: 1.5s;"/>
+                            <circle r="4" fill="var(--oxy-blood)" class="blood-particle" style="offset-path: path('M 150 60 L 150 90'); animation-delay: 0.5s;"/>
+                        </svg>
+                    </div>
+
+                    <ul class="feature-list">
+                        <li class="feature-item pathology">
+                            <span class="feature-label">Flow:</span>
+                            R-to-L shunt via PDA
+                        </li>
+                        <li class="feature-item pathology">
+                            <span class="feature-label">Pressure:</span>
+                            PA > Aortic pressure
+                        </li>
+                        <li class="feature-item pathology">
+                            <span class="feature-label">Saturation:</span>
+                            Upper body pink, lower body blue
+                        </li>
+                        <li class="feature-item pathology">
+                            <span class="feature-label">Mechanism:</span>
+                            Elevated pulmonary vascular resistance
+                        </li>
+                    </ul>
+                </article>
+
+                <!-- Critical Coarctation -->
+                <article class="condition-card" id="coarct-card">
+                    <div class="card-header">
+                        <h2 class="card-title critical">Critical Coarctation</h2>
+                        <span class="card-badge badge-anatomical">Anatomical Obstruction</span>
+                    </div>
+
+                    <div class="diagram-container" id="coarct-diagram">
+                        <svg viewBox="0 0 300 400" role="img" aria-label="Critical coarctation circulation diagram">
+                            <defs>
+                                <marker id="arrowhead-coarct" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#e74c3c" />
+                                </marker>
+                            </defs>
+
+                            <!-- Upper body (pink - pre-coarctation) -->
+                            <rect x="110" y="20" width="80" height="40" rx="5" fill="#ffebf0" stroke="var(--vessel-stroke)" stroke-width="2"/>
+                            <text x="150" y="40" text-anchor="middle" font-size="11" font-weight="600">Upper Body</text>
+                            <text x="150" y="52" text-anchor="middle" font-size="9" fill="#2ecc71" font-weight="600">Pink ✓</text>
+
+                            <!-- Heart -->
+                            <g class="heart-chamber">
+                                <ellipse cx="150" cy="150" rx="50" ry="60" fill="var(--heart-tissue)" stroke="var(--vessel-stroke)" stroke-width="3"/>
+                                <line x1="150" y1="90" x2="150" y2="210" stroke="var(--vessel-stroke)" stroke-width="2"/>
+                                <text x="125" y="145" font-size="11" font-weight="600">RA</text>
+                                <text x="165" y="145" font-size="11" font-weight="600">LA</text>
+                                <text x="125" y="175" font-size="11" font-weight="600">RV</text>
+                                <text x="165" y="175" font-size="11" font-weight="600">LV</text>
+                            </g>
+
+                            <!-- Pulmonary Artery -->
+                            <path d="M 130 100 Q 80 90 70 120" stroke="var(--deoxy-blood)" stroke-width="8" fill="none" opacity="0.7"/>
+                            <text x="50" y="115" font-size="10" font-weight="600">PA</text>
+
+                            <!-- Aorta (normal width pre-coarctation) -->
+                            <path d="M 170 100 Q 220 90 230 120" stroke="var(--oxy-blood)" stroke-width="8" fill="none" opacity="0.7" filter="url(#glow-oxy)"/>
+                            <text x="235" y="110" font-size="10" font-weight="600">Ao</text>
+
+                            <!-- Coarctation point (narrowing) -->
+                            <ellipse cx="230" cy="180" rx="8" ry="15" fill="#e74c3c" stroke="#c0392b" stroke-width="2" opacity="0.8"/>
+                            <text x="250" y="185" font-size="8" fill="#e74c3c" font-weight="700">Coarct</text>
+
+                            <!-- Ductus Arteriosus (patent, R→L) -->
+                            <line x1="80" y1="130" x2="220" y2="130" stroke="var(--danger-accent)" stroke-width="6" opacity="0.8"/>
+                            <text x="145" y="125" font-size="9" text-anchor="middle" fill="#e74c3c" font-weight="700">DA</text>
+
+                            <!-- Flow arrow R→L -->
+                            <path d="M 210 130 L 190 130" stroke="#e74c3c" stroke-width="4" fill="none" marker-end="url(#arrowhead-coarct)" class="shunt-arrow"/>
+                            <text x="200" y="150" font-size="9" text-anchor="middle" fill="#e74c3c" font-weight="700">R→L</text>
+
+                            <!-- Lower body (blue - post-coarctation) -->
+                            <rect x="110" y="340" width="80" height="40" rx="5" fill="#dae8f5" stroke="var(--vessel-stroke)" stroke-width="2"/>
+                            <text x="150" y="360" text-anchor="middle" font-size="11" font-weight="600">Lower Body</text>
+                            <text x="150" y="372" text-anchor="middle" font-size="9" fill="#4a90e2" font-weight="600">Blue ✗</text>
+
+                            <!-- Vessels to upper body (oxygenated, pre-coarctation) -->
+                            <path d="M 150 60 L 150 90" stroke="var(--oxy-blood)" stroke-width="6" fill="none" opacity="0.7" filter="url(#glow-oxy)"/>
+
+                            <!-- Aorta post-coarctation (thin - low pressure) -->
+                            <path d="M 230 195 L 230 250" stroke="var(--oxy-blood)" stroke-width="3" fill="none" opacity="0.3"/>
+
+                            <!-- PA to lower body (deoxygenated via DA) -->
+                            <path d="M 70 140 L 70 280 L 150 340" stroke="var(--deoxy-blood)" stroke-width="6" fill="none" opacity="0.8"/>
+
+                            <!-- Blood particles -->
+                            <circle r="4" fill="var(--deoxy-blood)" class="blood-particle" style="offset-path: path('M 70 140 L 70 280 L 150 340'); animation-delay: 0s;"/>
+                            <circle r="4" fill="var(--deoxy-blood)" class="blood-particle" style="offset-path: path('M 70 140 L 70 280 L 150 340'); animation-delay: 1.5s;"/>
+                            <circle r="4" fill="var(--oxy-blood)" class="blood-particle" style="offset-path: path('M 150 60 L 150 90'); animation-delay: 0.5s;"/>
+                        </svg>
+                    </div>
+
+                    <ul class="feature-list">
+                        <li class="feature-item critical">
+                            <span class="feature-label">Flow:</span>
+                            R-to-L shunt via DA
+                        </li>
+                        <li class="feature-item critical">
+                            <span class="feature-label">Pressure:</span>
+                            Low pressure distal to coarctation
+                        </li>
+                        <li class="feature-item critical">
+                            <span class="feature-label">Saturation:</span>
+                            Upper body pink, lower body blue
+                        </li>
+                        <li class="feature-item critical">
+                            <span class="feature-label">Mechanism:</span>
+                            Anatomical narrowing of aorta
+                        </li>
+                    </ul>
+                </article>
+            </div>
+
+            <!-- Clinical Pearls Section -->
+            <div class="highlight-box">
+                <h3 class="highlight-title">🔍 Key Clinical Distinction</h3>
+                <p style="font-size: 1.05rem; line-height: 1.8;">
+                    <strong>Pre-ductal vs Post-ductal Oxygen Saturation:</strong><br>
+                    Measure SpO<sub>2</sub> in the <strong>right hand (pre-ductal)</strong> and either <strong>foot (post-ductal)</strong>.<br>
+                    A difference of <strong>>3-5%</strong> suggests differential cyanosis from either PPHN or ductal-dependent systemic circulation.
+                </p>
+            </div>
+
+            <!-- Clinical Notes -->
+            <section class="clinical-notes">
+                <h2>Clinical Pearls & Diagnostics</h2>
+                <div class="notes-grid">
+                    <div class="note-card">
+                        <div class="note-title">📊 Diagnostic Approach</div>
+                        <p>• Pre/post-ductal SpO₂ difference >5%<br>
+                           • Echocardiography to confirm anatomy<br>
+                           • 4-limb blood pressures<br>
+                           • Hyperoxia test (limited value in differential cyanosis)</p>
+                    </div>
+
+                    <div class="note-card">
+                        <div class="note-title">⚠️ PPHN Management</div>
+                        <p>• Optimize ventilation and oxygenation<br>
+                           • Inhaled nitric oxide (iNO)<br>
+                           • Maintain adequate blood pressure<br>
+                           • Treat underlying cause (MAS, sepsis, etc.)</p>
+                    </div>
+
+                    <div class="note-card">
+                        <div class="note-title">🚨 Critical Coarctation</div>
+                        <p>• Prostaglandin E₁ to maintain ductal patency<br>
+                           • Immediate cardiology consultation<br>
+                           • Monitor for metabolic acidosis<br>
+                           • Surgical repair required</p>
+                    </div>
+
+                    <div class="note-card">
+                        <div class="note-title">🔬 Pathophysiology Recap</div>
+                        <p>• Normal: L→R PDA, well-oxygenated<br>
+                           • PPHN: High PVR, R→L PDA, pressure-related<br>
+                           • Coarctation: Anatomical obstruction, R→L DA<br>
+                           • Both show differential cyanosis</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Interactive Controls -->
+        <div class="controls" role="toolbar" aria-label="Animation controls">
+            <button class="control-btn active" id="play-btn" aria-pressed="true">
+                ▶ Playing
+            </button>
+            <button class="control-btn" id="reset-btn" aria-label="Reset animations">
+                ↻ Reset
+            </button>
+        </div>
+    </div>
+
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip" role="tooltip"></div>
+
+    <script>
+        // Animation control
+        let isPlaying = true;
+        const playBtn = document.getElementById('play-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const bloodParticles = document.querySelectorAll('.blood-particle');
+        const heartChambers = document.querySelectorAll('.heart-chamber');
+
+        playBtn.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                playBtn.textContent = '▶ Playing';
+                playBtn.classList.add('active');
+                playBtn.setAttribute('aria-pressed', 'true');
+                bloodParticles.forEach(p => p.style.animationPlayState = 'running');
+                heartChambers.forEach(h => h.style.animationPlayState = 'running');
+            } else {
+                playBtn.textContent = '⏸ Paused';
+                playBtn.classList.remove('active');
+                playBtn.setAttribute('aria-pressed', 'false');
+                bloodParticles.forEach(p => p.style.animationPlayState = 'paused');
+                heartChambers.forEach(h => h.style.animationPlayState = 'paused');
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            bloodParticles.forEach(particle => {
+                particle.style.animation = 'none';
+                setTimeout(() => {
+                    particle.style.animation = '';
+                }, 10);
+            });
+            heartChambers.forEach(chamber => {
+                chamber.style.animation = 'none';
+                setTimeout(() => {
+                    chamber.style.animation = '';
+                }, 10);
+            });
+        });
+
+        // Interactive tooltips
+        const tooltip = document.getElementById('tooltip');
+        const tooltipData = {
+            'RA': 'Right Atrium - receives deoxygenated blood from body',
+            'LA': 'Left Atrium - receives oxygenated blood from lungs',
+            'RV': 'Right Ventricle - pumps blood to pulmonary artery',
+            'LV': 'Left Ventricle - pumps blood to aorta',
+            'PA': 'Pulmonary Artery - carries blood to lungs',
+            'Ao': 'Aorta - main artery carrying oxygenated blood',
+            'PDA': 'Patent Ductus Arteriosus - fetal connection between PA and Aorta',
+            'DA': 'Ductus Arteriosus - keeping lower body perfused in critical coarctation',
+            'Coarct': 'Coarctation - narrowing of aorta causing obstruction'
+        };
+
+        document.querySelectorAll('svg text').forEach(element => {
+            const text = element.textContent.trim();
+            if (tooltipData[text]) {
+                element.style.cursor = 'pointer';
+                element.addEventListener('mouseenter', (e) => {
+                    tooltip.textContent = tooltipData[text];
+                    tooltip.classList.add('show');
+                    updateTooltipPosition(e);
+                });
+                element.addEventListener('mousemove', updateTooltipPosition);
+                element.addEventListener('mouseleave', () => {
+                    tooltip.classList.remove('show');
+                });
+            }
+        });
+
+        function updateTooltipPosition(e) {
+            tooltip.style.left = (e.pageX + 10) + 'px';
+            tooltip.style.top = (e.pageY + 10) + 'px';
+        }
+
+        // Card hover effects
+        const cards = document.querySelectorAll('.condition-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                cards.forEach(c => {
+                    if (c !== card) {
+                        c.style.opacity = '0.7';
+                    }
+                });
+            });
+            card.addEventListener('mouseleave', () => {
+                cards.forEach(c => {
+                    c.style.opacity = '1';
+                });
+            });
+        });
+
+        // Keyboard accessibility
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault();
+                playBtn.click();
+            }
+            if (e.key === 'r' || e.key === 'R') {
+                resetBtn.click();
+            }
+        });
+
+        // Add ARIA live region for screen readers
+        const liveRegion = document.createElement('div');
+        liveRegion.setAttribute('aria-live', 'polite');
+        liveRegion.setAttribute('aria-atomic', 'true');
+        liveRegion.className = 'sr-only';
+        document.body.appendChild(liveRegion);
+
+        playBtn.addEventListener('click', () => {
+            liveRegion.textContent = isPlaying ? 'Animations playing' : 'Animations paused';
+        });
+
+        console.log('%c🫀 Differential Cyanosis Visualizer', 'color: #ff6b9d; font-size: 20px; font-weight: bold;');
+        console.log('%cInteractive medical education tool', 'color: #4a90e2; font-size: 14px;');
+        console.log('%cKeyboard shortcuts: Space = Play/Pause, R = Reset', 'color: #2ecc71; font-size: 12px;');
+    </script>
+</body>
+</html>

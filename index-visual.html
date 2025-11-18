@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Differential Cyanosis - Visual Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 3rem;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 3rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .legend-box {
+            width: 60px;
+            height: 30px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .card-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .normal { color: #27ae60; }
+        .pphn { color: #e67e22; }
+        .coarct { color: #e74c3c; }
+
+        .card-subtitle {
+            text-align: center;
+            font-size: 0.95rem;
+            color: #95a5a6;
+            margin-bottom: 2rem;
+            min-height: 40px;
+        }
+
+        .diagram {
+            width: 100%;
+            height: 500px;
+            margin-bottom: 1.5rem;
+        }
+
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .point {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .point-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* SVG Animations */
+        @keyframes flow {
+            0% { offset-distance: 0%; opacity: 0; }
+            5% { opacity: 1; }
+            95% { opacity: 1; }
+            100% { offset-distance: 100%; opacity: 0; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 3px rgba(255,107,157,0.6)); }
+            50% { filter: drop-shadow(0 0 8px rgba(255,107,157,0.9)); }
+        }
+
+        .blood-particle {
+            animation: flow 2.5s infinite ease-in-out;
+        }
+
+        .heart-beat {
+            animation: pulse 1.2s infinite ease-in-out;
+        }
+
+        .vessel-glow {
+            animation: glow 2s infinite ease-in-out;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .btn {
+            background: white;
+            border: 2px solid #3498db;
+            color: #3498db;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #3498db;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn.active {
+            background: #27ae60;
+            border-color: #27ae60;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Differential Cyanosis in Newborns</h1>
+        <p class="subtitle">Visual Understanding Through Anatomically Accurate Diagrams</p>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box" style="background: linear-gradient(90deg, #ff6b9d, #ff8fab);"></div>
+                <span>Oxygenated Blood (Pink)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: linear-gradient(90deg, #4a90e2, #5ba3f5);"></div>
+                <span>Deoxygenated Blood (Blue)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: linear-gradient(90deg, rgba(255,107,157,0.3), rgba(74,144,226,0.3)); border: 2px dashed #999;"></div>
+                <span>Mixed Blood</span>
+            </div>
+        </div>
+
+        <div class="comparison">
+            <!-- NORMAL HEART -->
+            <div class="card">
+                <h2 class="card-title normal">Normal Heart</h2>
+                <p class="card-subtitle">All body parts receive oxygenated blood</p>
+
+                <svg class="diagram" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <!-- Gradients -->
+                        <linearGradient id="oxy-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:0.9" />
+                            <stop offset="100%" style="stop-color:#ff8fab;stop-opacity:0.9" />
+                        </linearGradient>
+
+                        <linearGradient id="deoxy-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#4a90e2;stop-opacity:0.9" />
+                            <stop offset="100%" style="stop-color:#5ba3f5;stop-opacity:0.9" />
+                        </linearGradient>
+
+                        <!-- Arrowheads -->
+                        <marker id="arrow-oxy" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+                            <path d="M2,2 L10,6 L2,10 L4,6 Z" fill="#ff6b9d" />
+                        </marker>
+
+                        <marker id="arrow-flow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                            <path d="M2,2 L8,5 L2,8 Z" fill="#27ae60" opacity="0.7" />
+                        </marker>
+
+                        <!-- Filters -->
+                        <filter id="glow-pink">
+                            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+
+                    <!-- UPPER BODY (Pink) -->
+                    <rect x="140" y="10" width="120" height="60" rx="8" fill="url(#oxy-gradient)" stroke="#e63980" stroke-width="3" opacity="0.85"/>
+                    <text x="200" y="45" text-anchor="middle" font-size="18" font-weight="700" fill="white">UPPER BODY</text>
+
+                    <!-- Lungs (bilateral) -->
+                    <ellipse cx="120" cy="130" rx="35" ry="45" fill="#ffd6e8" stroke="#e63980" stroke-width="2" opacity="0.6"/>
+                    <ellipse cx="280" cy="130" rx="35" ry="45" fill="#ffd6e8" stroke="#e63980" stroke-width="2" opacity="0.6"/>
+                    <text x="120" y="135" text-anchor="middle" font-size="12" fill="#c0392b">LUNG</text>
+                    <text x="280" y="135" text-anchor="middle" font-size="12" fill="#c0392b">LUNG</text>
+
+                    <!-- HEART (4 chambers) -->
+                    <g class="heart-beat">
+                        <!-- Heart outline -->
+                        <path d="M 200 180 Q 240 180 260 220 L 260 260 Q 260 290 200 320 Q 140 290 140 260 L 140 220 Q 160 180 200 180 Z"
+                              fill="#f4e4d7" stroke="#8b7355" stroke-width="4"/>
+
+                        <!-- Septum -->
+                        <line x1="200" y1="185" x2="200" y2="315" stroke="#8b7355" stroke-width="3"/>
+
+                        <!-- Chamber labels -->
+                        <text x="170" y="220" font-size="16" font-weight="700" fill="#2c3e50">RA</text>
+                        <text x="215" y="220" font-size="16" font-weight="700" fill="#2c3e50">LA</text>
+                        <text x="170" y="280" font-size="16" font-weight="700" fill="#2c3e50">RV</text>
+                        <text x="215" y="280" font-size="16" font-weight="700" fill="#2c3e50">LV</text>
+                    </g>
+
+                    <!-- PULMONARY ARTERY (blue, thinner) -->
+                    <path d="M 170 190 Q 120 180 100 140"
+                          stroke="url(#deoxy-gradient)" stroke-width="18" fill="none" opacity="0.8" stroke-linecap="round"/>
+                    <path d="M 230 190 Q 280 180 300 140"
+                          stroke="url(#deoxy-gradient)" stroke-width="18" fill="none" opacity="0.8" stroke-linecap="round"/>
+
+                    <!-- AORTA (pink, thicker = higher pressure) -->
+                    <path d="M 200 180 L 200 80"
+                          stroke="url(#oxy-gradient)" stroke-width="24" fill="none" opacity="0.9"
+                          stroke-linecap="round" filter="url(#glow-pink)"/>
+
+                    <!-- PDA (small, dotted - L to R flow) -->
+                    <line x1="160" y1="250" x2="240" y2="250"
+                          stroke="#27ae60" stroke-width="6" stroke-dasharray="8,4" opacity="0.4"/>
+                    <text x="200" y="245" text-anchor="middle" font-size="11" fill="#27ae60" font-weight="600">PDA</text>
+
+                    <!-- Flow arrow (L→R) -->
+                    <path d="M 170 250 L 190 250" stroke="#27ae60" stroke-width="4"
+                          fill="none" marker-end="url(#arrow-flow)" opacity="0.7"/>
+
+                    <!-- DESCENDING AORTA to lower body -->
+                    <path d="M 200 320 L 200 430"
+                          stroke="url(#oxy-gradient)" stroke-width="24" fill="none" opacity="0.9"
+                          stroke-linecap="round" filter="url(#glow-pink)"/>
+
+                    <!-- LOWER BODY (Pink) -->
+                    <rect x="140" y="430" width="120" height="60" rx="8" fill="url(#oxy-gradient)" stroke="#e63980" stroke-width="3" opacity="0.85"/>
+                    <text x="200" y="465" text-anchor="middle" font-size="18" font-weight="700" fill="white">LOWER BODY</text>
+
+                    <!-- Animated blood particles (oxygenated flow) -->
+                    <circle r="6" fill="#ff6b9d" class="blood-particle"
+                            style="offset-path: path('M 200 320 L 200 430'); animation-delay: 0s;">
+                        <animate attributeName="opacity" values="0;1;1;0" dur="2.5s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle r="6" fill="#ff6b9d" class="blood-particle"
+                            style="offset-path: path('M 200 320 L 200 430'); animation-delay: 0.8s;">
+                        <animate attributeName="opacity" values="0;1;1;0" dur="2.5s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle r="6" fill="#ff6b9d" class="blood-particle"
+                            style="offset-path: path('M 200 80 L 200 10'); animation-delay: 0.4s;">
+                        <animate attributeName="opacity" values="0;1;1;0" dur="2.5s" repeatCount="indefinite"/>
+                    </circle>
+                </svg>
+
+                <div class="key-points">
+                    <div class="point">
+                        <div class="point-icon" style="background: #27ae60;"></div>
+                        <span><strong>Aorta pressure</strong> &gt; PA pressure</span>
+                    </div>
+                    <div class="point">
+                        <div class="point-icon" style="background: #27ae60;"></div>
+                        <span><strong>PDA flow:</strong> Left → Right (small)</span>
+                    </div>
+                    <div class="point">
+                        <div class="point-icon" style="background: #ff6b9d;"></div>
+                        <span><strong>Entire body:</strong> Pink (well oxygenated)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PPHN -->
+            <div class="card">
+                <h2 class="card-title pphn">PPHN</h2>
+                <p class="card-subtitle">High lung pressure forces blue blood to lower body</p>
+
+                <svg class="diagram" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="oxy-gradient-2" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:0.9" />
+                            <stop offset="100%" style="stop-color:#ff8fab;stop-opacity:0.9" />
+                        </linearGradient>
+
+                        <linearGradient id="deoxy-gradient-2" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#4a90e2;stop-opacity:0.9" />
+                            <stop offset="100%" style="stop-color:#5ba3f5;stop-opacity:0.9" />
+                        </linearGradient>
+
+                        <linearGradient id="mixed-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:0.6" />
+                            <stop offset="50%" style="stop-color:#8b7dd8;stop-opacity:0.7" />
+                            <stop offset="100%" style="stop-color:#4a90e2;stop-opacity:0.8" />
+                        </linearGradient>
+
+                        <marker id="arrow-warning" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+                            <path d="M2,2 L10,6 L2,10 L4,6 Z" fill="#e67e22" />
+                        </marker>
+
+                        <filter id="glow-blue">
+                            <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+
+                    <!-- UPPER BODY (Pink - pre-ductal) -->
+                    <rect x="140" y="10" width="120" height="60" rx="8" fill="url(#oxy-gradient-2)" stroke="#e63980" stroke-width="3" opacity="0.85"/>
+                    <text x="200" y="45" text-anchor="middle" font-size="18" font-weight="700" fill="white">UPPER BODY</text>
+                    <text x="200" y="62" text-anchor="middle" font-size="13" font-weight="600" fill="#27ae60">✓ PINK</text>
+
+                    <!-- Lungs (bilateral) with HIGH PRESSURE indicator -->
+                    <ellipse cx="120" cy="130" rx="35" ry="45" fill="#d4e6f5" stroke="#3498db" stroke-width="4" opacity="0.7"/>
+                    <ellipse cx="280" cy="130" rx="35" ry="45" fill="#d4e6f5" stroke="#3498db" stroke-width="4" opacity="0.7"/>
+                    <text x="120" y="130" text-anchor="middle" font-size="11" fill="#c0392b" font-weight="700">LUNG</text>
+                    <text x="120" y="145" text-anchor="middle" font-size="10" fill="#e74c3c" font-weight="700">⚠ HIGH P</text>
+                    <text x="280" y="130" text-anchor="middle" font-size="11" fill="#c0392b" font-weight="700">LUNG</text>
+                    <text x="280" y="145" text-anchor="middle" font-size="10" fill="#e74c3c" font-weight="700">⚠ HIGH P</text>
+
+                    <!-- HEART -->
+                    <g class="heart-beat">
+                        <path d="M 200 180 Q 240 180 260 220 L 260 260 Q 260 290 200 320 Q 140 290 140 260 L 140 220 Q 160 180 200 180 Z"
+                              fill="#f4e4d7" stroke="#8b7355" stroke-width="4"/>
+                        <line x1="200" y1="185" x2="200" y2="315" stroke="#8b7355" stroke-width="3"/>
+                        <text x="170" y="220" font-size="16" font-weight="700" fill="#2c3e50">RA</text>
+                        <text x="215" y="220" font-size="16" font-weight="700" fill="#2c3e50">LA</text>
+                        <text x="170" y="280" font-size="16" font-weight="700" fill="#2c3e50">RV</text>
+                        <text x="215" y="280" font-size="16" font-weight="700" fill="#2c3e50">LV</text>
+                    </g>
+
+                    <!-- PULMONARY ARTERY (THICK = HIGH PRESSURE) -->
+                    <path d="M 170 190 Q 120 180 100 140"
+                          stroke="url(#deoxy-gradient-2)" stroke-width="28" fill="none" opacity="0.9" stroke-linecap="round" filter="url(#glow-blue)"/>
+                    <path d="M 230 190 Q 280 180 300 140"
+                          stroke="url(#deoxy-gradient-2)" stroke-width="28" fill="none" opacity="0.9" stroke-linecap="round" filter="url(#glow-blue)"/>
+
+                    <!-- Pressure indicator -->
+                    <circle cx="100" cy="160" r="25" fill="#e74c3c" opacity="0.2"/>
+                    <text x="100" y="163" text-anchor="middle" font-size="12" font-weight="700" fill="#e74c3c">HIGH</text>
+                    <text x="100" y="175" text-anchor="middle" font-size="10" font-weight="700" fill="#e74c3c">PA P</text>
+
+                    <!-- AORTA (normal) -->
+                    <path d="M 200 180 L 200 80"
+                          stroke="url(#oxy-gradient-2)" stroke-width="20" fill="none" opacity="0.9" stroke-linecap="round"/>
+
+                    <!-- PDA (LARGE, OPEN - R to L flow) ⚠️ -->
+                    <line x1="160" y1="250" x2="240" y2="250"
+                          stroke="#e67e22" stroke-width="12" opacity="0.8"/>
+                    <text x="200" y="242" text-anchor="middle" font-size="12" fill="#e74c3c" font-weight="700">PDA OPEN</text>
+
+                    <!-- Flow arrow (R→L) REVERSED! -->
+                    <path d="M 230 250 L 210 250" stroke="#e67e22" stroke-width="5"
+                          fill="none" marker-end="url(#arrow-warning)">
+                        <animate attributeName="stroke-width" values="5;7;5" dur="1.5s" repeatCount="indefinite"/>
+                    </path>
+                    <text x="220" y="268" text-anchor="middle" font-size="11" fill="#e67e22" font-weight="700">R→L</text>
+
+                    <!-- DESCENDING AORTA (mixed/blue blood) -->
+                    <path d="M 200 320 L 200 430"
+                          stroke="url(#mixed-gradient)" stroke-width="24" fill="none" opacity="0.9" stroke-linecap="round"/>
+
+                    <!-- LOWER BODY (BLUE - desaturated) -->
+                    <rect x="140" y="430" width="120" height="60" rx="8" fill="url(#deoxy-gradient-2)" stroke="#3498db" stroke-width="3" opacity="0.85"/>
+                    <text x="200" y="465" text-anchor="middle" font-size="18" font-weight="700" fill="white">LOWER BODY</text>
+                    <text x="200" y="482" text-anchor="middle" font-size="13" font-weight="600" fill="#e74c3c">✗ BLUE</text>
+
+                    <!-- Animated blood particles (deoxygenated to lower body) -->
+                    <circle r="7" fill="#4a90e2" class="blood-particle"
+                            style="offset-path: path('M 200 320 L 200 430'); animation-delay: 0s;">
+                        <animate attributeName="opacity" values="0;1;1;0" dur="2.5s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle r="7" fill="#6b8dd8" class="blood-particle"
+                            style="offset-path: path('M 200 320 L 200 430'); animation-delay: 0.8s;">
+                        <animate attributeName="opacity" values="0;1;1;0" dur="2.5s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle r="6" fill="#ff6b9d" class="blood-particle"
+                            style="offset-path: path('M 200 80 L 200 10'); animation-delay: 0.4s;">
+                        <animate attributeName="opacity" values="0;1;1;0" dur="2.5s" repeatCount="indefinite"/>
+                    </circle>
+                </svg>
+
+                <div class="key-points">
+                    <div class="point">
+                        <div class="point-icon" style="background: #e67e22;"></div>
+                        <span><strong>PA pressure</strong> &gt; Aorta (reversed!)</span>
+                    </div>
+                    <div class="point">
+                        <div class="point-icon" style="background: #e67e22;"></div>
+                        <span><strong>PDA flow:</strong> Right → Left (backward)</span>
+                    </div>
+                    <div class="point">
+                        <div class="point-icon" style="background: #4a90e2;"></div>
+                        <span><strong>Lower body:</strong> Blue (deoxygenated)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CRITICAL COARCTATION -->
+            <div class="card">
+                <h2 class="card-title coarct">Critical Coarctation</h2>
+                <p class="card-subtitle">Narrowed aorta blocks flow to lower body</p>
+
+                <svg class="diagram" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="oxy-gradient-3" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:0.9" />
+                            <stop offset="100%" style="stop-color:#ff8fab;stop-opacity:0.9" />
+                        </linearGradient>
+
+                        <linearGradient id="deoxy-gradient-3" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#4a90e2;stop-opacity:0.9" />
+                            <stop offset="100%" style="stop-color:#5ba3f5;stop-opacity:0.9" />
+                        </linearGradient>
+
+                        <marker id="arrow-danger" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+                            <path d="M2,2 L10,6 L2,10 L4,6 Z" fill="#e74c3c" />
+                        </marker>
+
+                        <filter id="glow-pink-3">
+                            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+
+                        <!-- Pinch pattern for coarctation -->
+                        <pattern id="danger-stripes" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+                            <rect width="4" height="8" fill="#e74c3c"/>
+                            <rect x="4" width="4" height="8" fill="#c0392b"/>
+                        </pattern>
+                    </defs>
+
+                    <!-- UPPER BODY (Pink - pre-coarctation) -->
+                    <rect x="140" y="10" width="120" height="60" rx="8" fill="url(#oxy-gradient-3)" stroke="#e63980" stroke-width="3" opacity="0.85"/>
+                    <text x="200" y="45" text-anchor="middle" font-size="18" font-weight="700" fill="white">UPPER BODY</text>
+                    <text x="200" y="62" text-anchor="middle" font-size="13" font-weight="600" fill="#27ae60">✓ PINK</text>
+
+                    <!-- Lungs (bilateral) -->
+                    <ellipse cx="120" cy="130" rx="35" ry="45" fill="#ffd6e8" stroke="#e63980" stroke-width="2" opacity="0.6"/>
+                    <ellipse cx="280" cy="130" rx="35" ry="45" fill="#ffd6e8" stroke="#e63980" stroke-width="2" opacity="0.6"/>
+                    <text x="120" y="135" text-anchor="middle" font-size="12" fill="#c0392b">LUNG</text>
+                    <text x="280" y="135" text-anchor="middle" font-size="12" fill="#c0392b">LUNG</text>
+
+                    <!-- HEART -->
+                    <g class="heart-beat">
+                        <path d="M 200 180 Q 240 180 260 220 L 260 260 Q 260 290 200 320 Q 140 290 140 260 L 140 220 Q 160 180 200 180 Z"
+                              fill="#f4e4d7" stroke="#8b7355" stroke-width="4"/>
+                        <line x1="200" y1="185" x2="200" y2="315" stroke="#8b7355" stroke-width="3"/>
+                        <text x="170" y="220" font-size="16" font-weight="700" fill="#2c3e50">RA</text>
+                        <text x="215" y="220" font-size="16" font-weight="700" fill="#2c3e50">LA</text>
+                        <text x="170" y="280" font-size="16" font-weight="700" fill="#2c3e50">RV</text>
+                        <text x="215" y="280" font-size="16" font-weight="700" fill="#2c3e50">LV</text>
+                    </g>
+
+                    <!-- PULMONARY ARTERY -->
+                    <path d="M 170 190 Q 120 180 100 140"
+                          stroke="url(#deoxy-gradient-3)" stroke-width="18" fill="none" opacity="0.8" stroke-linecap="round"/>
+                    <path d="M 230 190 Q 280 180 300 140"
+                          stroke="url(#deoxy-gradient-3)" stroke-width="18" fill="none" opacity="0.8" stroke-linecap="round"/>
+
+                    <!-- AORTA (normal width to coarctation point) -->
+                    <path d="M 200 180 L 200 80"
+                          stroke="url(#oxy-gradient-3)" stroke-width="24" fill="none" opacity="0.9"
+                          stroke-linecap="round" filter="url(#glow-pink-3)"/>
+
+                    <!-- Branch to upper body -->
+                    <path d="M 200 100 Q 180 90 160 70"
+                          stroke="url(#oxy-gradient-3)" stroke-width="16" fill="none" opacity="0.9"
+                          stroke-linecap="round" marker-end="url(#arrow-danger)"/>
+                    <path d="M 200 100 Q 220 90 240 70"
+                          stroke="url(#oxy-gradient-3)" stroke-width="16" fill="none" opacity="0.9"
+                          stroke-linecap="round" marker-end="url(#arrow-danger)"/>
+
+                    <!-- COARCTATION POINT ⚠️ CRITICAL -->
+                    <g id="coarctation-site">
+                        <!-- Narrowing visualization -->
+                        <ellipse cx="200" cy="340" rx="8" ry="20" fill="url(#danger-stripes)" stroke="#c0392b" stroke-width="3"/>
+                        <ellipse cx="200" cy="340" rx="12" ry="24" fill="none" stroke="#e74c3c" stroke-width="2" stroke-dasharray="4,2">
+                            <animate attributeName="stroke-opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite"/>
+                        </ellipse>
+
+                        <!-- Warning labels -->
+                        <text x="240" y="335" font-size="12" font-weight="700" fill="#e74c3c">⚠</text>
+                        <text x="250" y="340" font-size="11" font-weight="700" fill="#e74c3c">COARCT</text>
+                        <text x="250" y="352" font-size="10" font-weight="600" fill="#c0392b">(narrowed)</text>
+                    </g>
+
+                    <!-- DUCTUS ARTERIOSUS (PATENT - lifesaving!) -->
+                    <path d="M 150 270 Q 120 300 100 350"
+                          stroke="#e74c3c" stroke-width="14" fill="none" opacity="0.85" stroke-linecap="round">
+                        <animate attributeName="stroke-width" values="14;16;14" dur="1.5s" repeatCount="indefinite"/>
+                    </path>
+                    <text x="110" y="300" font-size="11" fill="#e74c3c" font-weight="700">DA</text>
+                    <text x="105" y="312" font-size="9" fill="#c0392b" font-weight="600">OPEN</text>
+
+                    <!-- Flow arrow (R→L through DA) -->
+                    <path d="M 140 285 L 125 295" stroke="#e74c3c" stroke-width="5"
+                          fill="none" marker-end="url(#arrow-danger)">
+                        <animate attributeName="stroke-width" values="5;7;5" dur="1.5s" repeatCount="indefinite"/>
+                    </path>
+
+                    <!-- PA to lower body (deoxygenated via DA) -->
+                    <path d="M 100 360 Q 110 400 140 430"
+                          stroke="url(#deoxy-gradient-3)" stroke-width="20" fill="none" opacity="0.9" stroke-linecap="round"/>
+
+                    <!-- Thin trickle past coarctation (minimal flow) -->
+                    <path d="M 200 360 L 200 420"
+                          stroke="url(#oxy-gradient-3)" stroke-width="4" fill="none" opacity="0.3"
+                          stroke-linecap="round" stroke-dasharray="4,4"/>
+                    <text x="215" y="390" font-size="9" fill="#999">minimal</text>
+
+                    <!-- LOWER BODY (BLUE - depends on DA) -->
+                    <rect x="140" y="430" width="120" height="60" rx="8" fill="url(#deoxy-gradient-3)" stroke="#3498db" stroke-width="3" opacity="0.85"/>
+                    <text x="200" y="465" text-anchor="middle" font-size="18" font-weight="700" fill="white">LOWER BODY</text>
+                    <text x="200" y="482" text-anchor="middle" font-size="13" font-weight="600" fill="#e74c3c">✗ BLUE</text>
+
+                    <!-- Animated blood particles -->
+                    <circle r="7" fill="#4a90e2" class="blood-particle"
+                            style="offset-path: path('M 100 360 Q 110 400 140 430'); animation-delay: 0s;">
+                        <animate attributeName="opacity" values="0;1;1;0" dur="2.5s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle r="7" fill="#5ba3f5" class="blood-particle"
+                            style="offset-path: path('M 100 360 Q 110 400 140 430'); animation-delay: 1s;">
+                        <animate attributeName="opacity" values="0;1;1;0" dur="2.5s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle r="6" fill="#ff6b9d" class="blood-particle"
+                            style="offset-path: path('M 200 100 Q 180 90 160 70'); animation-delay: 0.3s;">
+                        <animate attributeName="opacity" values="0;1;1;0" dur="2.5s" repeatCount="indefinite"/>
+                    </circle>
+                </svg>
+
+                <div class="key-points">
+                    <div class="point">
+                        <div class="point-icon" style="background: #e74c3c;"></div>
+                        <span><strong>Narrowed aorta</strong> blocks lower body flow</span>
+                    </div>
+                    <div class="point">
+                        <div class="point-icon" style="background: #e74c3c;"></div>
+                        <span><strong>DA flow:</strong> Right → Left (saves lower body)</span>
+                    </div>
+                    <div class="point">
+                        <div class="point-icon" style="background: #4a90e2;"></div>
+                        <span><strong>Lower body:</strong> Blue (ductal-dependent)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn active" id="playBtn">▶ Playing</button>
+            <button class="btn" id="resetBtn">↻ Reset</button>
+        </div>
+    </div>
+
+    <script>
+        let isPlaying = true;
+        const playBtn = document.getElementById('playBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const animations = document.querySelectorAll('.blood-particle, .heart-beat, animate');
+
+        playBtn.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                playBtn.textContent = '▶ Playing';
+                playBtn.classList.add('active');
+                animations.forEach(el => {
+                    if (el.style) el.style.animationPlayState = 'running';
+                    if (el.beginElement) el.beginElement();
+                });
+            } else {
+                playBtn.textContent = '⏸ Paused';
+                playBtn.classList.remove('active');
+                animations.forEach(el => {
+                    if (el.style) el.style.animationPlayState = 'paused';
+                    if (el.pauseAnimations) el.pauseAnimations();
+                });
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            animations.forEach(el => {
+                if (el.style) {
+                    el.style.animation = 'none';
+                    setTimeout(() => el.style.animation = '', 10);
+                }
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ') {
+                e.preventDefault();
+                playBtn.click();
+            }
+            if (e.key === 'r' || e.key === 'R') {
+                resetBtn.click();
+            }
+        });
+
+        console.log('%c🫀 Visual Differential Cyanosis Guide', 'color: #ff6b9d; font-size: 20px; font-weight: bold;');
+        console.log('%cKeyboard: Space = Play/Pause, R = Reset', 'color: #27ae60;');
+    </script>
+</body>
+</html>
