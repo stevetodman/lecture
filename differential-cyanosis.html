@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Differential Cyanosis - Anatomically Accurate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.8rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .tagline {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 3rem;
+            font-weight: 500;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 3rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .legend-swatch {
+            width: 60px;
+            height: 35px;
+            border-radius: 6px;
+            border: 3px solid #2c3e50;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.5rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+        }
+
+        .title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .normal-title { color: #27ae60; }
+        .pphn-title { color: #e67e22; }
+        .coarct-title { color: #e74c3c; }
+
+        .subtitle {
+            text-align: center;
+            color: #95a5a6;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        svg {
+            width: 100%;
+            height: auto;
+        }
+
+        .key-point {
+            background: #f8f9fa;
+            padding: 0.75rem;
+            margin-top: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .normal-key { border-color: #27ae60; }
+        .pphn-key { border-color: #e67e22; }
+        .coarct-key { border-color: #e74c3c; }
+
+        @media (max-width: 1400px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes flow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .flow-indicator {
+            animation: flow 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Differential Cyanosis in Newborns</h1>
+        <p class="tagline">Anatomically Accurate Visual Guide</p>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-swatch" style="background: linear-gradient(135deg, #ff6b9d, #ff8fab);"></div>
+                <span>Oxygenated Blood</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-swatch" style="background: linear-gradient(135deg, #4a90e2, #5ba3f5);"></div>
+                <span>Deoxygenated Blood</span>
+            </div>
+        </div>
+
+        <div class="comparison">
+            <!-- NORMAL -->
+            <div class="card">
+                <h2 class="title normal-title">Normal</h2>
+                <p class="subtitle">Physiologic circulation</p>
+
+                <svg viewBox="0 0 450 650" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="pink1" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff6b9d"/>
+                            <stop offset="100%" style="stop-color:#ff8fab"/>
+                        </linearGradient>
+                        <linearGradient id="blue1" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#4a90e2"/>
+                            <stop offset="100%" style="stop-color:#5ba3f5"/>
+                        </linearGradient>
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="3"/>
+                        </filter>
+                    </defs>
+
+                    <!-- HEART (simplified) -->
+                    <ellipse cx="225" cy="200" rx="55" ry="70" fill="#f4e4d7" stroke="#8b7355" stroke-width="3"/>
+                    <line x1="225" y1="135" x2="225" y2="265" stroke="#8b7355" stroke-width="2.5"/>
+
+                    <!-- Chamber labels -->
+                    <text x="195" y="180" font-size="16" font-weight="700" fill="#555">R</text>
+                    <text x="245" y="180" font-size="16" font-weight="700" fill="#555">L</text>
+
+                    <!-- PULMONARY ARTERY (from RV, blue) -->
+                    <path d="M 195 140 Q 140 120 100 160"
+                          stroke="url(#blue1)" stroke-width="22" fill="none" stroke-linecap="round" opacity="0.9"/>
+
+                    <!-- AORTA - Ascending -->
+                    <path d="M 255 150 L 255 80"
+                          stroke="url(#pink1)" stroke-width="26" fill="none" stroke-linecap="round" opacity="0.95"/>
+
+                    <!-- AORTIC ARCH (curves left) -->
+                    <path d="M 255 80 Q 300 60 330 100"
+                          stroke="url(#pink1)" stroke-width="26" fill="none" stroke-linecap="round" opacity="0.95"/>
+
+                    <!-- Arch branches to upper body -->
+                    <path d="M 270 75 L 270 20" stroke="url(#pink1)" stroke-width="14" fill="none" stroke-linecap="round" opacity="0.9"/>
+                    <path d="M 290 68 L 310 20" stroke="url(#pink1)" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.9"/>
+                    <path d="M 310 75 L 340 20" stroke="url(#pink1)" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.9"/>
+
+                    <!-- DESCENDING AORTA -->
+                    <path d="M 330 100 L 330 450"
+                          stroke="url(#pink1)" stroke-width="26" fill="none" stroke-linecap="round" opacity="0.95"/>
+
+                    <!-- DUCTUS ARTERIOSUS (small, dotted) -->
+                    <line x1="120" y1="180" x2="310" y2="180"
+                          stroke="#27ae60" stroke-width="5" stroke-dasharray="10,8" opacity="0.4"/>
+                    <text x="215" y="175" text-anchor="middle" font-size="13" fill="#27ae60" font-weight="700">PDA</text>
+
+                    <!-- Small L→R arrow -->
+                    <path d="M 140 180 L 170 180" stroke="#27ae60" stroke-width="3"
+                          fill="none" marker-end="url(#arrow-green)"/>
+                    <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                        <path d="M1,1 L7,4 L1,7" fill="#27ae60"/>
+                    </marker>
+
+                    <!-- Lungs -->
+                    <ellipse cx="70" cy="200" rx="30" ry="50" fill="#ffe6f0" stroke="#e63980" stroke-width="2" opacity="0.5"/>
+                    <text x="70" y="208" text-anchor="middle" font-size="12" fill="#c0392b" font-weight="600">Lung</text>
+
+                    <!-- BODY REGIONS -->
+                    <!-- Upper body (head/arms) - PINK -->
+                    <g id="upper-body">
+                        <circle cx="305" cy="25" r="18" fill="url(#pink1)" stroke="#2c3e50" stroke-width="2.5"/>
+                        <text x="305" y="30" text-anchor="middle" font-size="12" font-weight="700" fill="white">Head</text>
+
+                        <circle cx="255" cy="25" r="15" fill="url(#pink1)" stroke="#2c3e50" stroke-width="2.5"/>
+                        <text x="255" y="29" text-anchor="middle" font-size="10" font-weight="700" fill="white">R Arm</text>
+
+                        <circle cx="350" cy="25" r="15" fill="url(#pink1)" stroke="#2c3e50" stroke-width="2.5"/>
+                        <text x="350" y="29" text-anchor="middle" font-size="10" font-weight="700" fill="white">L Arm</text>
+                    </g>
+
+                    <!-- Pre-ductal label -->
+                    <text x="380" y="120" font-size="11" fill="#27ae60" font-weight="700">Pre-ductal</text>
+                    <text x="380" y="135" font-size="11" fill="#27ae60" font-weight="700">(before PDA)</text>
+
+                    <!-- Lower body (legs) - PINK -->
+                    <g id="lower-body">
+                        <rect x="300" y="480" width="60" height="120" rx="8" fill="url(#pink1)" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="330" y="535" text-anchor="middle" font-size="14" font-weight="700" fill="white">Legs</text>
+                        <text x="330" y="555" text-anchor="middle" font-size="14" font-weight="700" fill="white">Abdomen</text>
+                    </g>
+
+                    <!-- Post-ductal label -->
+                    <text x="380" y="540" font-size="11" fill="#27ae60" font-weight="700">Post-ductal</text>
+                    <text x="380" y="555" font-size="11" fill="#27ae60" font-weight="700">(after PDA)</text>
+
+                    <!-- SpO2 monitoring sites -->
+                    <text x="240" y="50" font-size="9" fill="#555" font-weight="600">SpO₂ ~98%</text>
+                    <text x="375" y="595" font-size="9" fill="#555" font-weight="600">SpO₂ ~98%</text>
+                </svg>
+
+                <div class="key-point normal-key">
+                    <strong>Normal:</strong> Entire body receives oxygenated blood from LV. Small L→R flow through PDA. No differential cyanosis.
+                </div>
+            </div>
+
+            <!-- PPHN -->
+            <div class="card">
+                <h2 class="title pphn-title">PPHN</h2>
+                <p class="subtitle">High pulmonary pressure</p>
+
+                <svg viewBox="0 0 450 650" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="pink2" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff6b9d"/>
+                            <stop offset="100%" style="stop-color:#ff8fab"/>
+                        </linearGradient>
+                        <linearGradient id="blue2" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#4a90e2"/>
+                            <stop offset="100%" style="stop-color:#5ba3f5"/>
+                        </linearGradient>
+                        <linearGradient id="mixed" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff6b9d"/>
+                            <stop offset="40%" style="stop-color:#9b7bc8"/>
+                            <stop offset="100%" style="stop-color:#4a90e2"/>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- HEART -->
+                    <ellipse cx="225" cy="200" rx="55" ry="70" fill="#f4e4d7" stroke="#8b7355" stroke-width="3"/>
+                    <line x1="225" y1="135" x2="225" y2="265" stroke="#8b7355" stroke-width="2.5"/>
+                    <text x="195" y="180" font-size="16" font-weight="700" fill="#555">R</text>
+                    <text x="245" y="180" font-size="16" font-weight="700" fill="#555">L</text>
+
+                    <!-- PULMONARY ARTERY (THICK = HIGH PRESSURE!) -->
+                    <path d="M 195 140 Q 140 120 100 160"
+                          stroke="url(#blue2)" stroke-width="34" fill="none" stroke-linecap="round" opacity="0.95"/>
+
+                    <!-- High pressure indicator -->
+                    <circle cx="85" cy="135" r="22" fill="none" stroke="#e74c3c" stroke-width="4" stroke-dasharray="6,3" opacity="0.8" class="flow-indicator"/>
+                    <text x="85" y="133" text-anchor="middle" font-size="11" font-weight="800" fill="#e74c3c">HIGH</text>
+                    <text x="85" y="145" text-anchor="middle" font-size="10" font-weight="800" fill="#e74c3c">PA P</text>
+
+                    <!-- AORTA - Ascending -->
+                    <path d="M 255 150 L 255 80"
+                          stroke="url(#pink2)" stroke-width="26" fill="none" stroke-linecap="round" opacity="0.95"/>
+
+                    <!-- AORTIC ARCH -->
+                    <path d="M 255 80 Q 300 60 330 100"
+                          stroke="url(#pink2)" stroke-width="26" fill="none" stroke-linecap="round" opacity="0.95"/>
+
+                    <!-- Arch branches (PINK - oxygenated) -->
+                    <path d="M 270 75 L 270 20" stroke="url(#pink2)" stroke-width="14" fill="none" stroke-linecap="round" opacity="0.9"/>
+                    <path d="M 290 68 L 310 20" stroke="url(#pink2)" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.9"/>
+                    <path d="M 310 75 L 340 20" stroke="url(#pink2)" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.9"/>
+
+                    <!-- DESCENDING AORTA (MIXED blood from PDA shunt!) -->
+                    <path d="M 330 100 L 330 190"
+                          stroke="url(#pink2)" stroke-width="26" fill="none" stroke-linecap="round" opacity="0.95"/>
+                    <path d="M 330 190 L 330 450"
+                          stroke="url(#mixed)" stroke-width="26" fill="none" stroke-linecap="round" opacity="0.95"/>
+
+                    <!-- PDA (THICK, SOLID, R→L!) -->
+                    <line x1="120" y1="180" x2="310" y2="180"
+                          stroke="#e67e22" stroke-width="16" opacity="0.9"/>
+                    <text x="215" y="172" text-anchor="middle" font-size="13" fill="#e74c3c" font-weight="800">PDA</text>
+
+                    <!-- R→L arrow (REVERSED!) -->
+                    <path d="M 280 180 L 300 180" stroke="#e74c3c" stroke-width="6"
+                          fill="none" marker-end="url(#arrow-warning)" class="flow-indicator"/>
+                    <marker id="arrow-warning" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+                        <path d="M2,2 L10,6 L2,10" fill="#e74c3c"/>
+                    </marker>
+                    <text x="215" y="200" text-anchor="middle" font-size="12" fill="#e74c3c" font-weight="800">R→L</text>
+
+                    <!-- Lungs (high resistance) -->
+                    <ellipse cx="70" cy="200" rx="30" ry="50" fill="#d4e6f5" stroke="#3498db" stroke-width="3" opacity="0.6"/>
+                    <text x="70" y="203" text-anchor="middle" font-size="11" fill="#c0392b" font-weight="700">Lung</text>
+                    <text x="70" y="216" text-anchor="middle" font-size="9" fill="#e74c3c" font-weight="700">High R</text>
+
+                    <!-- BODY REGIONS -->
+                    <!-- Upper body - PINK (pre-ductal) -->
+                    <g id="upper-body-pink">
+                        <circle cx="305" cy="25" r="18" fill="url(#pink2)" stroke="#2c3e50" stroke-width="2.5"/>
+                        <text x="305" y="30" text-anchor="middle" font-size="12" font-weight="700" fill="white">Head</text>
+
+                        <circle cx="255" cy="25" r="15" fill="url(#pink2)" stroke="#2c3e50" stroke-width="2.5"/>
+                        <text x="255" y="29" text-anchor="middle" font-size="10" font-weight="700" fill="white">R Arm</text>
+
+                        <circle cx="350" cy="25" r="15" fill="url(#pink2)" stroke="#2c3e50" stroke-width="2.5"/>
+                        <text x="350" y="29" text-anchor="middle" font-size="10" font-weight="700" fill="white">L Arm</text>
+                    </g>
+
+                    <!-- Pre-ductal (PINK!) -->
+                    <text x="375" y="120" font-size="11" fill="#27ae60" font-weight="800">Pre-ductal ✓</text>
+                    <text x="375" y="135" font-size="10" fill="#27ae60" font-weight="700">PINK</text>
+
+                    <!-- Lower body - BLUE (post-ductal, mixed blood) -->
+                    <g id="lower-body-blue">
+                        <rect x="300" y="480" width="60" height="120" rx="8" fill="url(#blue2)" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="330" y="535" text-anchor="middle" font-size="14" font-weight="700" fill="white">Legs</text>
+                        <text x="330" y="555" text-anchor="middle" font-size="14" font-weight="700" fill="white">Abdomen</text>
+                    </g>
+
+                    <!-- Post-ductal (BLUE!) -->
+                    <text x="375" y="540" font-size="11" fill="#e74c3c" font-weight="800">Post-ductal ✗</text>
+                    <text x="375" y="555" font-size="10" fill="#e74c3c" font-weight="700">BLUE</text>
+
+                    <!-- SpO2 monitoring -->
+                    <text x="235" y="50" font-size="9" fill="#27ae60" font-weight="700">SpO₂ ~95%</text>
+                    <text x="375" y="595" font-size="9" fill="#e74c3c" font-weight="700">SpO₂ ~75%</text>
+                </svg>
+
+                <div class="key-point pphn-key">
+                    <strong>PPHN:</strong> High PA pressure reverses PDA flow (R→L). Deoxygenated blood enters descending aorta. Upper body pink, lower body blue.
+                </div>
+            </div>
+
+            <!-- CRITICAL COARCTATION -->
+            <div class="card">
+                <h2 class="title coarct-title">Critical Coarctation</h2>
+                <p class="subtitle">Aortic narrowing</p>
+
+                <svg viewBox="0 0 450 650" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="pink3" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff6b9d"/>
+                            <stop offset="100%" style="stop-color:#ff8fab"/>
+                        </linearGradient>
+                        <linearGradient id="blue3" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#4a90e2"/>
+                            <stop offset="100%" style="stop-color:#5ba3f5"/>
+                        </linearGradient>
+                        <pattern id="stripes" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
+                            <rect width="5" height="10" fill="#e74c3c"/>
+                            <rect x="5" width="5" height="10" fill="#c0392b"/>
+                        </pattern>
+                    </defs>
+
+                    <!-- HEART -->
+                    <ellipse cx="225" cy="200" rx="55" ry="70" fill="#f4e4d7" stroke="#8b7355" stroke-width="3"/>
+                    <line x1="225" y1="135" x2="225" y2="265" stroke="#8b7355" stroke-width="2.5"/>
+                    <text x="195" y="180" font-size="16" font-weight="700" fill="#555">R</text>
+                    <text x="245" y="180" font-size="16" font-weight="700" fill="#555">L</text>
+
+                    <!-- PULMONARY ARTERY (normal) -->
+                    <path d="M 195 140 Q 140 120 100 160"
+                          stroke="url(#blue3)" stroke-width="22" fill="none" stroke-linecap="round" opacity="0.9"/>
+
+                    <!-- AORTA - Ascending -->
+                    <path d="M 255 150 L 255 80"
+                          stroke="url(#pink3)" stroke-width="26" fill="none" stroke-linecap="round" opacity="0.95"/>
+
+                    <!-- AORTIC ARCH -->
+                    <path d="M 255 80 Q 300 60 330 100"
+                          stroke="url(#pink3)" stroke-width="26" fill="none" stroke-linecap="round" opacity="0.95"/>
+
+                    <!-- Arch branches (PINK - oxygenated to upper body) -->
+                    <path d="M 270 75 L 270 20" stroke="url(#pink3)" stroke-width="14" fill="none" stroke-linecap="round" opacity="0.9"/>
+                    <path d="M 290 68 L 310 20" stroke="url(#pink3)" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.9"/>
+                    <path d="M 310 75 L 340 20" stroke="url(#pink3)" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.9"/>
+
+                    <!-- DESCENDING AORTA to coarctation -->
+                    <path d="M 330 100 L 330 200"
+                          stroke="url(#pink3)" stroke-width="26" fill="none" stroke-linecap="round" opacity="0.95"/>
+
+                    <!-- COARCTATION (SEVERE NARROWING!) -->
+                    <g id="coarctation">
+                        <ellipse cx="330" cy="230" rx="10" ry="25" fill="url(#stripes)" stroke="#c0392b" stroke-width="4"/>
+                        <ellipse cx="330" cy="230" rx="16" ry="31" fill="none" stroke="#e74c3c" stroke-width="3" stroke-dasharray="5,3" opacity="0.8" class="flow-indicator"/>
+
+                        <!-- Warning label -->
+                        <text x="380" y="225" font-size="12" font-weight="800" fill="#e74c3c">COARCT</text>
+                        <text x="380" y="240" font-size="10" font-weight="700" fill="#c0392b">(narrowed)</text>
+                    </g>
+
+                    <!-- Minimal trickle past coarctation -->
+                    <path d="M 330 260 L 330 320"
+                          stroke="url(#pink3)" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.2" stroke-dasharray="8,6"/>
+                    <text x="350" y="290" font-size="9" fill="#999">minimal</text>
+
+                    <!-- DUCTUS ARTERIOSUS (THICK, OPEN - critical!) -->
+                    <path d="M 120 180 Q 200 250 310 290"
+                          stroke="#e74c3c" stroke-width="18" fill="none" stroke-linecap="round" opacity="0.9"/>
+                    <text x="200" y="220" text-anchor="middle" font-size="13" fill="#e74c3c" font-weight="800">DA</text>
+
+                    <!-- R→L arrow -->
+                    <path d="M 260 265 L 290 280" stroke="#e74c3c" stroke-width="6"
+                          fill="none" marker-end="url(#arrow-danger)" class="flow-indicator"/>
+                    <marker id="arrow-danger" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+                        <path d="M2,2 L10,6 L2,10" fill="#e74c3c"/>
+                    </marker>
+                    <text x="200" y="245" text-anchor="middle" font-size="12" fill="#e74c3c" font-weight="800">R→L</text>
+
+                    <!-- Blood from DA to lower body -->
+                    <path d="M 310 310 L 310 450"
+                          stroke="url(#blue3)" stroke-width="24" fill="none" stroke-linecap="round" opacity="0.95"/>
+
+                    <!-- Lungs -->
+                    <ellipse cx="70" cy="200" rx="30" ry="50" fill="#ffe6f0" stroke="#e63980" stroke-width="2" opacity="0.5"/>
+                    <text x="70" y="208" text-anchor="middle" font-size="12" fill="#c0392b" font-weight="600">Lung</text>
+
+                    <!-- BODY REGIONS -->
+                    <!-- Upper body - PINK (pre-coarctation) -->
+                    <g id="upper-body-pink2">
+                        <circle cx="305" cy="25" r="18" fill="url(#pink3)" stroke="#2c3e50" stroke-width="2.5"/>
+                        <text x="305" y="30" text-anchor="middle" font-size="12" font-weight="700" fill="white">Head</text>
+
+                        <circle cx="255" cy="25" r="15" fill="url(#pink3)" stroke="#2c3e50" stroke-width="2.5"/>
+                        <text x="255" y="29" text-anchor="middle" font-size="10" font-weight="700" fill="white">R Arm</text>
+
+                        <circle cx="350" cy="25" r="15" fill="url(#pink3)" stroke="#2c3e50" stroke-width="2.5"/>
+                        <text x="350" y="29" text-anchor="middle" font-size="10" font-weight="700" fill="white">L Arm</text>
+                    </g>
+
+                    <!-- Pre-coarctation -->
+                    <text x="360" y="120" font-size="11" fill="#27ae60" font-weight="800">Pre-coarct ✓</text>
+                    <text x="360" y="135" font-size="10" fill="#27ae60" font-weight="700">PINK</text>
+
+                    <!-- Lower body - BLUE (ductal-dependent!) -->
+                    <g id="lower-body-blue2">
+                        <rect x="280" y="480" width="60" height="120" rx="8" fill="url(#blue3)" stroke="#2c3e50" stroke-width="3"/>
+                        <text x="310" y="535" text-anchor="middle" font-size="14" font-weight="700" fill="white">Legs</text>
+                        <text x="310" y="555" text-anchor="middle" font-size="14" font-weight="700" fill="white">Abdomen</text>
+                    </g>
+
+                    <!-- Post-coarctation (ductal-dependent) -->
+                    <text x="360" y="540" font-size="11" fill="#e74c3c" font-weight="800">Post-coarct ✗</text>
+                    <text x="360" y="555" font-size="10" fill="#e74c3c" font-weight="700">BLUE</text>
+                    <text x="360" y="570" font-size="9" fill="#e74c3c" font-weight="600">(via DA)</text>
+
+                    <!-- SpO2 monitoring -->
+                    <text x="235" y="50" font-size="9" fill="#27ae60" font-weight="700">SpO₂ ~98%</text>
+                    <text x="355" y="595" font-size="9" fill="#e74c3c" font-weight="700">SpO₂ ~70%</text>
+                </svg>
+
+                <div class="key-point coarct-key">
+                    <strong>Coarctation:</strong> Narrowed aorta blocks flow to lower body. Patent DA provides R→L shunt. Upper body pink (pre-coarct), lower body blue (ductal-dependent).
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
